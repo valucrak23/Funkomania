@@ -1,0 +1,900 @@
+/* --- Estilos Globales y Fondo --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+body {
+    background-color: #000;
+    min-height: 100vh;
+    position: relative;
+    font-family: 'Montserrat', Arial, sans-serif;
+    color: #cbd5e0;
+}
+
+#starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Asegura que esté detrás de todo */
+}
+
+h1, h2, h3, h4, h5, .navbar-brand {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 700;
+    color: #c5a6ff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(197, 166, 255, 0.5);
+}
+.card-title {
+    font-family: 'Montserrat', Arial, sans-serif;
+    color: #e2e8f0;
+    font-weight: bold;
+}
+.card-text, .card p, .card strong {
+    color: #a0aec0;
+}
+.card .btn {
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+}
+.card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+}
+
+/* --- Navbar (Público) --- */
+.bg-dark-transparent {
+    background: rgba(26, 32, 44, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100; /* Asegura que esté por encima de otros elementos */
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    color: #c5a6ff !important;
+    transition: all 0.3s ease;
+}
+.navbar-brand:hover {
+    text-shadow: 0 0 15px rgba(197, 166, 255, 0.8);
+    transform: scale(1.05);
+}
+.nav-link {
+    color: #a0aec0 !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 0.5rem 1rem !important;
+}
+.nav-link.active, .nav-link:hover {
+    color: #f0e6ff !important;
+    background: rgba(197, 166, 255, 0.1);
+    text-shadow: 0 0 8px rgba(197, 166, 255, 0.5);
+}
+.navbar-toggler {
+    border-color: rgba(197, 166, 255, 0.5);
+}
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(197, 166, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* --- Tarjetas de Producto (Público) --- */
+.card {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(26, 32, 44, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    color: #cbd5e0;
+}
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    border-color: rgba(197, 166, 255, 0.5);
+}
+.card-title {
+    color: #e2e8f0;
+}
+.card-text, .card p, .card strong {
+    color: #a0aec0;
+}
+.card .img-fluid {
+    max-height: 150px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(197, 166, 255, 0.2));
+    transition: all 0.3s ease;
+}
+.card:hover .img-fluid {
+    filter: drop-shadow(0 0 15px rgba(197, 166, 255, 0.5));
+}
+.card .btn {
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+}
+.card .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+}
+
+/* Estilo para contenedor de imagen en tarjetas de productos */
+.card-img-container {
+    height: 200px; /* Altura fija para todas las imágenes */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    overflow: hidden;
+}
+.card-img-container .card-img-top {
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+.card:hover .card-img-container .card-img-top {
+    transform: scale(1.05);
+}
+.card .z-2 {
+    position: relative;
+    z-index: 2;
+}
+
+/* --- Jumbotron (Público) --- */
+.jumbotron {
+    background: rgba(12, 10, 26, 0.5);
+    border-radius: 1.5rem;
+    padding: 3rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #f0e6ff;
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.content-wrapper {
+    background: rgba(30, 41, 59, 0.75);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1;
+}
+
+/* --- Footer (Público) --- */
+footer {
+    background: transparent;
+    margin-top: 2rem;
+    padding: 1.5rem 0;
+    color: #a0aec0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.footer-social a {
+    color: #a0aec0;
+    margin: 0 0.5rem;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+.footer-social a:hover {
+    color: #c5a6ff;
+}
+
+/* --- Estilos para Sección de Administración --- */
+.admin-container {
+    background: rgba(26, 32, 44, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+/* Tabla de Admin */
+.admin-table {
+    background: transparent;
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: none;
+}
+.admin-table thead th { 
+    background: rgba(12, 10, 26, 0.9) !important;
+    color: #c5a6ff !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: none;
+    padding: 1rem;
+    border-bottom: 2px solid rgba(197, 166, 255, 0.2);
+}
+.admin-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.admin-table tbody tr:last-child {
+    border-bottom: none;
+}
+.admin-table tbody tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(197, 166, 255, 0.1);
+}
+.admin-table tbody tr:hover td {
+    background-color: rgba(45, 55, 72, 0.8);
+}
+.admin-table td {
+    color: #e2e8f0;
+    vertical-align: middle;
+    padding: 1rem;
+    border: none;
+    background-color: rgba(30, 41, 59, 0.6);
+    background-image: 
+        radial-gradient(1px 1px at 5% 10%, rgba(255, 255, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 15% 85%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(1px 1px at 40% 30%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 65% 60%, rgba(255, 255, 255, 0.2), transparent),
+        radial-gradient(2px 2px at 80% 20%, rgba(255, 255, 255, 0.4), transparent),
+        radial-gradient(1px 1px at 95% 90%, rgba(255, 255, 255, 0.3), transparent);
+    background-size: 100% 100%;
+    transition: all 0.3s ease;
+}
+.admin-table tfoot tr {
+    background: rgba(45, 55, 72, 0.5);
+    border-top: 2px solid rgba(197, 166, 255, 0.3);
+}
+.img-admin-thumb { 
+    width: 60px; height: 60px; 
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+.img-admin-thumb:hover {
+    transform: scale(1.15);
+    border-color: rgba(197, 166, 255, 0.5);
+}
+
+/* Botones de Admin */
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    border-radius: 20px;
+    margin: 0 0.2rem;
+}
+.btn-sm:hover {
+    transform: translateY(-1px);
+}
+
+/* Formulario de Admin */
+.admin-form-container {
+    padding-top: 1rem;
+}
+.admin-form-container .form-label {
+    font-weight: 600;
+    color: #a0aec0;
+}
+.admin-form-container .form-control,
+.admin-form-container .form-select {
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(45, 55, 72, 0.5);
+    color: #e2e8f0;
+    transition: all 0.3s ease;
+}
+.admin-form-container .form-control::placeholder {
+    color: #718096;
+}
+.admin-form-container .form-control:focus,
+.admin-form-container .form-select:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.2);
+    background: rgba(45, 55, 72, 0.8);
+}
+.admin-form-container .form-select option {
+    background: #1a202c;
+}
+.admin-form-container .form-check-input {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.admin-form-container .form-check-input:checked {
+    background-color: #764ba2;
+    border-color: #764ba2;
+}
+
+/* Alertas */
+.alert {
+    border-radius: 15px;
+    border: none;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+}
+.alert-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+.alert-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+}
+.alert-info {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+}
+.alert-link {
+    color: #e2e8f0;
+    text-decoration: underline;
+}
+.alert-link:hover {
+    color: #c5a6ff;
+}
+
+/* Badges */
+.badge {
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+.badge.bg-primary {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+}
+
+/* Text utilities */
+.text-success {
+    color: #48bb78 !important;
+}
+.text-muted {
+    color: #a0aec0 !important;
+}
+
+/* Botones genéricos (usados en admin y público) */
+.btn {
+    border-radius: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+.btn-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+}
+.btn-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+}
+.btn-secondary {
+    background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+    color: white;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    .card .img-fluid {
+        max-height: 120px;
+    }
+    .admin-container {
+        padding: 1rem;
+        margin: 0 1rem;
+    }
+    .admin-table td {
+        padding: 0.5rem;
+    }
+    .img-admin-thumb {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .header-navbar {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    .navbar-nav {
+        margin-top: 1rem;
+        background: rgba(26, 32, 44, 0.9);
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+    .navbar-nav .nav-item { width: 100%; }
+    .navbar-nav .nav-link { padding: 0.8rem 1rem !important; }
+}
+
+@media (max-width: 1199.98px) {
+    .header-navbar {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    .navbar-nav {
+        margin-top: 1rem;
+        background: rgba(26, 32, 44, 0.9);
+        border-radius: 8px;
+        padding: 0.5rem;
+        flex-wrap: wrap; /* Permitir que los elementos se envuelvan en el menú colapsado */
+    }
+    .navbar-nav .nav-item { width: 100%; }
+    .navbar-nav .nav-link { padding: 0.8rem 1rem !important; }
+}
+
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+}
+
+.stars-small {
+    height: 1px;
+    width: 1px;
+    background: #fff;
+    box-shadow: 200px 300px #fff, 500px 700px #fff, 800px 100px #fff, 1200px 900px #fff, 1500px 400px #fff, 1800px 600px #fff, 900px 1300px #fff, 400px 1600px #fff, 1100px 1800px #fff, 1600px 1400px #fff;
+    animation: animateStars 150s linear infinite;
+}
+
+.stars-medium {
+    height: 2px;
+    width: 2px;
+    background: #fff;
+    box-shadow: 100px 200px #fff, 400px 600px #fff, 900px 800px #fff, 1300px 1100px #fff, 1700px 1300px #fff, 300px 1500px #fff, 700px 1800px #fff;
+    animation: animateStars 100s linear infinite;
+}
+
+.stars-large {
+    height: 3px;
+    width: 3px;
+    background: #fff;
+    box-shadow: 250px 450px #fff, 600px 850px #fff, 1000px 1250px #fff, 1400px 1650px #fff;
+    animation: animateStars 50s linear infinite;
+}
+
+/* Estilos para el contenedor de login */
+.login-container {
+    max-width: 420px;
+    width: 100%;
+    padding: 2.5rem;
+    background-color: var(--color-fondo-secundario);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--color-borde);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.login-container .logo-link {
+    text-decoration: none;
+    color: var(--color-primario);
+    transition: color 0.3s ease;
+}
+
+.login-container .logo-link:hover {
+    color: var(--color-texto);
+}
+
+/* --- Estilos para la nueva página de Inicio --- */
+.hero-banner {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9)), url('../img/goku_super_saiyan_blue.png');
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--border-radius-lg);
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+}
+
+.hero-banner .btn-primary {
+    background: var(--color-primario);
+    border-color: var(--color-primario);
+}
+
+.hero-banner .btn-outline-secondary {
+    color: #fff;
+    background-color: transparent;
+    border-color: #fff;
+}
+.hero-banner .btn-outline-secondary:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+#destacados .border-bottom {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.jumbotron-style {
+    background: var(--color-fondo-secundario);
+    border: 1px solid var(--color-borde);
+    color: var(--color-texto);
+}
+
+.jumbotron-style h3 {
+    color: var(--color-primario);
+}
+
+.jumbotron-style .btn {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    border: none;
+}
+
+.jumbotron-style .btn-dark {
+    background-color: #000;
+    color: #fff;
+}
+
+/* ===== ESTILOS TEMÁTICOS PARA CARDS Y BOTONES ===== */
+
+/* Botones con fondo temático sutil */
+.btn-tematico {
+    border: 1px solid rgba(197, 166, 255, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(197, 166, 255, 0.2) 100%);
+}
+
+.btn-tematico::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.btn-tematico:hover {
+    border-color: rgba(197, 166, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(197, 166, 255, 0.2);
+}
+
+/* Base para botones dentro de las cards */
+.card .btn-tematico {
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+}
+
+/* Sobrescribir estilos para cada categoría */
+.card-disney .btn-tematico { background: linear-gradient(135deg, #f878a4, #a8d8ea); color: #43384c;}
+.card-star-wars .btn-tematico { background: linear-gradient(135deg, #da9f32, #191970); }
+.card-peliculas .btn-tematico { background: linear-gradient(135deg, #8a2be2, #4b0082); }
+.card-series .btn-tematico { background: linear-gradient(135deg, #ff4500, #ffd700); color: #4b2b00; }
+.card-musica .btn-tematico { background: linear-gradient(135deg, #ff1493, #ff00ff); }
+.card-videojuegos .btn-tematico { background: linear-gradient(135deg, #00ffff, #008080); color: #003333;}
+.card-harry-potter .btn-tematico { background: linear-gradient(135deg, #ffd700, #8b4513); color: #3b1e00;}
+.card-senor-anillos .btn-tematico { background: linear-gradient(135deg, #b8860b, #228b22); }
+.card-ediciones-especiales .btn-tematico { background: linear-gradient(135deg, #d4af37, #c0c0c0); color: #4a3e1e;}
+.card-marvel .btn-tematico { background: linear-gradient(135deg, #dc143c, #00008b); }
+.card-dibujos-animados .btn-tematico { background: linear-gradient(135deg, #ffff00, #00bfff); color: #005a78;}
+.card-dc-comics .btn-tematico { background: linear-gradient(135deg, #191970, #800080); }
+
+/* Botones para cards dinámicas */
+.card-dynamic-0 .btn-tematico { background: linear-gradient(135deg, #ff6347, #ff9e86); color: #52251c;}
+.card-dynamic-1 .btn-tematico { background: linear-gradient(135deg, #32cd32, #90ee90); color: #114511;}
+.card-dynamic-2 .btn-tematico { background: linear-gradient(135deg, #1e90ff, #87ceeb); color: #0b385f;}
+.card-dynamic-3 .btn-tematico { background: linear-gradient(135deg, #ffa500, #ffd700); color: #5a3a00;}
+.card-dynamic-4 .btn-tematico { background: linear-gradient(135deg, #8a2be2, #dda0dd); }
+.card-dynamic-5 .btn-tematico { background: linear-gradient(135deg, #ff1493, #ffb6c1); }
+.card-dynamic-6 .btn-tematico { background: linear-gradient(135deg, #008080, #40e0d0); }
+.card-dynamic-7 .btn-tematico { background: linear-gradient(135deg, #808000, #ffffe0); color: #333300;}
+.card-default .btn-tematico { background: linear-gradient(135deg, #808080, #a9a9a9); }
+
+/* Hover genérico para botones de cards */
+.card .btn-tematico:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
+}
+
+/* Cards temáticas por categoría */
+.card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* Disney - Colores mágicos y vibrantes */
+.card-disney {
+    background: linear-gradient(135deg, rgba(255, 182, 193, 0.1) 0%, rgba(255, 218, 185, 0.1) 50%, rgba(173, 216, 230, 0.1) 100%);
+    border-color: rgba(255, 182, 193, 0.3);
+}
+
+.card-disney:hover {
+    border-color: rgba(255, 182, 193, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 182, 193, 0.2);
+}
+
+/* Star Wars - Colores espaciales y dorados */
+.card-star-wars {
+    background: linear-gradient(135deg, rgba(25, 25, 112, 0.1) 0%, rgba(47, 79, 79, 0.1) 50%, rgba(218, 165, 32, 0.1) 100%);
+    border-color: rgba(218, 165, 32, 0.3);
+}
+
+.card-star-wars:hover {
+    border-color: rgba(218, 165, 32, 0.6);
+    box-shadow: 0 15px 35px rgba(218, 165, 32, 0.2);
+}
+
+/* Películas - Colores cinematográficos */
+.card-peliculas {
+    background: linear-gradient(135deg, rgba(128, 0, 128, 0.1) 0%, rgba(75, 0, 130, 0.1) 50%, rgba(138, 43, 226, 0.1) 100%);
+    border-color: rgba(138, 43, 226, 0.3);
+}
+
+.card-peliculas:hover {
+    border-color: rgba(138, 43, 226, 0.6);
+    box-shadow: 0 15px 35px rgba(138, 43, 226, 0.2);
+}
+
+/* Series - Colores modernos y vibrantes */
+.card-series {
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.1) 0%, rgba(255, 140, 0, 0.1) 50%, rgba(255, 215, 0, 0.1) 100%);
+    border-color: rgba(255, 69, 0, 0.3);
+}
+
+.card-series:hover {
+    border-color: rgba(255, 69, 0, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 69, 0, 0.2);
+}
+
+/* Música - Colores rítmicos y energéticos */
+.card-musica {
+    background: linear-gradient(135deg, rgba(255, 20, 147, 0.1) 0%, rgba(255, 105, 180, 0.1) 50%, rgba(255, 0, 255, 0.1) 100%);
+    border-color: rgba(255, 20, 147, 0.3);
+}
+
+.card-musica:hover {
+    border-color: rgba(255, 20, 147, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 20, 147, 0.2);
+}
+
+/* Videojuegos - Colores tecnológicos */
+.card-videojuegos {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 128, 128, 0.1) 50%, rgba(0, 255, 127, 0.1) 100%);
+    border-color: rgba(0, 255, 255, 0.3);
+}
+
+.card-videojuegos:hover {
+    border-color: rgba(0, 255, 255, 0.6);
+    box-shadow: 0 15px 35px rgba(0, 255, 255, 0.2);
+}
+
+/* Harry Potter - Colores mágicos y hogwarts */
+.card-harry-potter {
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, rgba(160, 82, 45, 0.1) 50%, rgba(255, 215, 0, 0.1) 100%);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.card-harry-potter:hover {
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
+}
+
+/* Señor de los Anillos - Colores épicos y terrenales */
+.card-senor-anillos {
+    background: linear-gradient(135deg, rgba(34, 139, 34, 0.1) 0%, rgba(85, 107, 47, 0.1) 50%, rgba(184, 134, 11, 0.1) 100%);
+    border-color: rgba(184, 134, 11, 0.3);
+}
+
+.card-senor-anillos:hover {
+    border-color: rgba(184, 134, 11, 0.6);
+    box-shadow: 0 15px 35px rgba(184, 134, 11, 0.2);
+}
+
+/* Ediciones Especiales - Colores premium y exclusivos */
+.card-ediciones-especiales {
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(212, 175, 55, 0.1) 50%, rgba(255, 215, 0, 0.1) 100%);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.card-ediciones-especiales:hover {
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
+}
+
+/* Marvel - Colores heroicos y vibrantes */
+.card-marvel {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(255, 69, 0, 0.1) 50%, rgba(0, 0, 139, 0.1) 100%);
+    border-color: rgba(220, 20, 60, 0.3);
+}
+
+.card-marvel:hover {
+    border-color: rgba(220, 20, 60, 0.6);
+    box-shadow: 0 15px 35px rgba(220, 20, 60, 0.2);
+}
+
+/* Dibujos Animados - Colores alegres y divertidos */
+.card-dibujos-animados {
+    background: linear-gradient(135deg, rgba(255, 255, 0, 0.1) 0%, rgba(0, 255, 0, 0.1) 50%, rgba(0, 191, 255, 0.1) 100%);
+    border-color: rgba(255, 255, 0, 0.3);
+}
+
+.card-dibujos-animados:hover {
+    border-color: rgba(255, 255, 0, 0.6);
+    box-shadow: 0 15px 35px rgba(255, 255, 0, 0.2);
+}
+
+/* DC Cómics - Colores oscuros y dramáticos */
+.card-dc-comics {
+    background: linear-gradient(135deg, rgba(25, 25, 112, 0.1) 0%, rgba(47, 79, 79, 0.1) 50%, rgba(128, 0, 128, 0.1) 100%);
+    border-color: rgba(25, 25, 112, 0.3);
+}
+
+.card-dc-comics:hover {
+    border-color: rgba(25, 25, 112, 0.6);
+    box-shadow: 0 15px 35px rgba(25, 25, 112, 0.2);
+}
+
+/* Cards dinámicas para categorías no mapeadas */
+.card-dynamic-0 {
+    background: linear-gradient(135deg, rgba(255, 99, 71, 0.1) 0%, rgba(255, 160, 122, 0.1) 100%);
+    border-color: rgba(255, 99, 71, 0.3);
+}
+
+.card-dynamic-1 {
+    background: linear-gradient(135deg, rgba(50, 205, 50, 0.1) 0%, rgba(144, 238, 144, 0.1) 100%);
+    border-color: rgba(50, 205, 50, 0.3);
+}
+
+.card-dynamic-2 {
+    background: linear-gradient(135deg, rgba(30, 144, 255, 0.1) 0%, rgba(135, 206, 235, 0.1) 100%);
+    border-color: rgba(30, 144, 255, 0.3);
+}
+
+.card-dynamic-3 {
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.1) 0%, rgba(255, 215, 0, 0.1) 100%);
+    border-color: rgba(255, 165, 0, 0.3);
+}
+
+.card-dynamic-4 {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(221, 160, 221, 0.1) 100%);
+    border-color: rgba(138, 43, 226, 0.3);
+}
+
+.card-dynamic-5 {
+    background: linear-gradient(135deg, rgba(255, 20, 147, 0.1) 0%, rgba(255, 182, 193, 0.1) 100%);
+    border-color: rgba(255, 20, 147, 0.3);
+}
+
+.card-dynamic-6 {
+    background: linear-gradient(135deg, rgba(0, 128, 128, 0.1) 0%, rgba(64, 224, 208, 0.1) 100%);
+    border-color: rgba(0, 128, 128, 0.3);
+}
+
+.card-dynamic-7 {
+    background: linear-gradient(135deg, rgba(128, 128, 0, 0.1) 0%, rgba(255, 255, 224, 0.1) 100%);
+    border-color: rgba(128, 128, 0, 0.3);
+}
+
+/* Card por defecto */
+.card-default {
+    background: linear-gradient(135deg, rgba(128, 128, 128, 0.1) 0%, rgba(169, 169, 169, 0.1) 100%);
+    border-color: rgba(128, 128, 128, 0.3);
+}
+
+.card-default:hover {
+    border-color: rgba(128, 128, 128, 0.6);
+    box-shadow: 0 15px 35px rgba(128, 128, 128, 0.2);
+}
+
+/* Estilos temáticos para enlaces de navegación */
+.nav-link.btn-tematico {
+    background: linear-gradient(135deg, rgba(197, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(197, 166, 255, 0.2);
+    border-radius: 8px;
+    margin: 0 5px;
+    padding: 8px 16px !important;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.nav-link.btn-tematico:hover {
+    background: linear-gradient(135deg, rgba(197, 166, 255, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+    border-color: rgba(197, 166, 255, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(197, 166, 255, 0.2);
+}
+
+/* Estilos para dropdown items temáticos */
+.dropdown-item {
+    color: #e2e8f0;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    margin: 2px 8px;
+    width: auto;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(197, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    transform: translateX(5px);
+    box-shadow: 0 2px 10px rgba(197, 166, 255, 0.1);
+}
+
+/* Estilos para el menú dropdown */
+.dropdown-menu {
+    background: rgba(26, 32, 44, 0.95);
+    border: 1px solid rgba(197, 166, 255, 0.2);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para formularios de admin */
+.admin-form-container .form-control,
+.admin-form-container .form-select {
+    background-color: rgba(30, 41, 59, 0.8);
+    color: #e2e8f0;
+    border: 1px solid rgba(197, 166, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.admin-form-container .form-control:focus,
+.admin-form-container .form-select:focus {
+    background-color: rgba(45, 55, 72, 0.9);
+    color: #fff;
+    border-color: rgba(197, 166, 255, 0.5);
+    box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.2);
+}
+
+.admin-form-container .form-label {
+    color: #c5a6ff;
+    font-weight: 500;
+}
+
+.admin-form-container .form-select option {
+    background-color: #1e293b;
+    color: #e2e8f0;
+}
