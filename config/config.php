@@ -1,2 +1,0 @@
-<?php
-define('BASE_URL', '/PII-CRUZ_CUBILLO_IJELCHUK-PARCIAL_2'); 

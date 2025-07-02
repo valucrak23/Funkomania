@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../clases/ProductoDAO.php';
 require_once __DIR__ . '/../../clases/Producto.php';
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../../config/config.php';
 
 $dao = new ProductoDAO();
 $db = Database::getInstance();

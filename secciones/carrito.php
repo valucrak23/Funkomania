@@ -1,17 +1,8 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../clases/ProductoDAO.php';
 
 // Quitar producto del carrito (antes de cualquier HTML)
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar'])) {
-    $id = intval($_POST['quitar']);
-    if (isset($_SESSION['carrito'][$id])) {
-        unset($_SESSION['carrito'][$id]);
-    }
-    // Redirección después de procesar
-    header('Location: ?sec=carrito');
-    exit;
-}
+// (Eliminado: ahora se maneja en index.php)
 
 $carrito = isset($_SESSION['carrito']) ? $_SESSION['carrito'] : [];
 $dao = new ProductoDAO();

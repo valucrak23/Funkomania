@@ -1,6 +1,5 @@
 <?php
 require_once(__DIR__ . '/../config/database.php');
-require_once(__DIR__ . '/../config/config.php');
 
 /**
  * Clase para manejar las operaciones de base de datos de productos
@@ -129,7 +128,6 @@ class ProductoDAO {
             $stmt = $this->db->query($sql, [$termino, $termino]);
             $productos = [];
             while ($row = $stmt->fetch()) {
-                $imagen = empty($row['imagen']) ? BASE_URL . '/img/not_found.png' : BASE_URL . '/img/' . $row['imagen'];
                 $productos[] = new Producto(
                     $row['id'],
                     $row['Nombre'],
@@ -138,7 +136,7 @@ class ProductoDAO {
                     $row['categorias'] ?? 'Sin categoría',
                     0,
                     null,
-                    $imagen
+                    $row['imagen']
                 );
             }
             return $productos;
@@ -163,7 +161,6 @@ class ProductoDAO {
             $stmt = $this->db->query($sql, [$precioMin, $precioMax]);
             $productos = [];
             while ($row = $stmt->fetch()) {
-                $imagen = empty($row['imagen']) ? BASE_URL . '/img/not_found.png' : BASE_URL . '/img/' . $row['imagen'];
                 $productos[] = new Producto(
                     $row['id'],
                     $row['Nombre'],
@@ -172,7 +169,7 @@ class ProductoDAO {
                     $row['categorias'] ?? 'Sin categoría',
                     0,
                     null,
-                    $imagen
+                    $row['imagen']
                 );
             }
             return $productos;
@@ -364,7 +361,7 @@ class ProductoDAO {
             
             while ($row = $stmt->fetch()) {
                 // Solo usar imagen por defecto si está vacía o es NULL
-                $imagen = empty($row['imagen']) ? BASE_URL . '/img/not_found.png' : BASE_URL . '/img/' . $row['imagen'];
+                $imagen = empty($row['imagen']) ? 'img/not_found.png' : 'img/' . $row['imagen'];
                 $productos[] = new Producto(
                     $row['id'],
                     $row['Nombre'],
@@ -442,6 +439,40 @@ class ProductoDAO {
             return $productos;
         } catch (Exception $e) {
             error_log("Error en obtenerDestacados: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Buscar productos por nombre de categoría
+     */
+    public function buscarPorCategoriaNombre($nombreCategoria) {
+        try {
+            $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
+                    FROM productos p
+                    LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
+                    LEFT JOIN categoria c ON pc.categoria_id = c.id
+                    WHERE c.nombre_categoria LIKE ?
+                    GROUP BY p.id
+                    ORDER BY p.Nombre";
+            $nombreCategoria = "%$nombreCategoria%";
+            $stmt = $this->db->query($sql, [$nombreCategoria]);
+            $productos = [];
+            while ($row = $stmt->fetch()) {
+                $productos[] = new Producto(
+                    $row['id'],
+                    $row['Nombre'],
+                    $row['Descripcion'],
+                    $row['precio'],
+                    $row['categorias'] ?? 'Sin categoría',
+                    0,
+                    null,
+                    $row['imagen']
+                );
+            }
+            return $productos;
+        } catch (Exception $e) {
+            error_log("Error en buscarPorCategoriaNombre: " . $e->getMessage());
             return [];
         }
     }
