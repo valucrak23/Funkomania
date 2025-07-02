@@ -1,4 +1,9 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin') {
+    header('Location: ../../index.php');
+    exit;
+}
 // Toda la lógica de carga y guardado se maneja en index.php
 // Este archivo solo muestra el formulario.
 // Las variables $editando, $categoria, y $errores vienen de index.php

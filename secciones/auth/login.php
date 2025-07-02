@@ -19,8 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 session_regenerate_id(true);
                 $_SESSION['usuario_id'] = $usuario['id'];
                 $_SESSION['usuario_nombre'] = $usuario['nombre_completo'];
-
-                header('Location: index.php?sec=admin/admin_productos');
+                $_SESSION['usuario_nivel'] = $usuario['Nivel'];
+                if ($_SESSION['usuario_nivel'] === 'Admin') {
+                    header('Location: index.php?sec=admin/admin_productos');
+                } else {
+                    header('Location: index.php');
+                }
                 exit;
             } else {
                 $error = 'El email o la contraseña son incorrectos.';

@@ -1,4 +1,11 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin') {
+    header('Location: ../../index.php');
+    exit;
+}
 // Esta página será incluida por index.php, que ya tiene el DAO.
 // Las categorías se cargan en la lógica de admin_categorias en index.php.
 ?>

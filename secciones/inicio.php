@@ -1,9 +1,3 @@
-<?php
-// Ya no necesitamos el DAO aquí, lo usaremos en el HTML
-// $dao = new ProductoDAO();
-// $productos_destacados = $dao->obtenerDestacados(4);
-?>
-
 <!-- Hero Banner -->
 <div class="hero-banner text-center text-white py-5 mb-5">
     <div class="container">

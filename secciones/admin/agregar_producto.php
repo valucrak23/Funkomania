@@ -1,3 +1,13 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin') {
+    header('Location: ../../index.php');
+    exit;
+}
+?>
+
 <div class="admin-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="bi bi-pencil-square"></i> <?= $editando ? 'Editar producto' : 'Agregar nuevo producto' ?></h2>

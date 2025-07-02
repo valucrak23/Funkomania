@@ -294,17 +294,25 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
                     </li>
                     <!-- Lógica de Navegación de Admin -->
                     <?php if (isset($_SESSION['usuario_id'])): ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
-                                <li><a class="dropdown-item" href="?sec=admin/admin_productos">Gestionar Productos</a></li>
-                                <li><a class="dropdown-item" href="?sec=admin/admin_categorias">Gestionar Categorías</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="index.php?sec=auth/logout">Cerrar Sesión</a></li>
-                            </ul>
-                        </li>
+                        <?php if (isset($_SESSION['usuario_nivel']) && $_SESSION['usuario_nivel'] === 'Admin'): ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
+                                    <li><a class="dropdown-item" href="?sec=admin/admin_productos">Gestionar Productos</a></li>
+                                    <li><a class="dropdown-item" href="?sec=admin/admin_categorias">Gestionar Categorías</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="index.php?sec=auth/logout">Cerrar Sesión</a></li>
+                                </ul>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?sec=auth/logout">
+                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </ul>
             </div>
