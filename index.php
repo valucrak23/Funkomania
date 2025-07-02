@@ -8,7 +8,7 @@ require_once 'config/database.php';
 require_once 'clases/Producto.php';
 require_once 'clases/ProductoDAO.php';
 
-// --- Lógica para quitar producto del carrito (antes de cualquier salida) ---
+// --- Lógica para quitar producto del carrito---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar'])) {
     $id = intval($_POST['quitar']);
     if (isset($_SESSION['carrito'][$id])) {
@@ -93,7 +93,7 @@ if ($seccion === 'admin/admin_categorias') {
     $editando = false;
     $categoria = ['id' => null, 'nombre_categoria' => '', 'descripcion' => ''];
 
-    // Cargar datos para editar (solo en GET)
+    // Cargar datos para editar
     if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
         $editando = true;
         $categoria = $dao->obtenerCategoriaPorId(intval($_GET['id']));

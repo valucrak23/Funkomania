@@ -30,7 +30,7 @@ if ($busqueda) {
     $titulo = "Todos los productos";
 }
 
-// Función para obtener la clase CSS según la categoría (sistema dinámico)
+// Función para obtener la clase CSS según la categoría
 function getCategoriaClass($categorias) {
     if (empty($categorias) || $categorias === 'Sin categoría') {
         return 'card-default';
@@ -39,8 +39,7 @@ function getCategoriaClass($categorias) {
     // Convertir a minúsculas y limpiar
     $categorias_lower = strtolower(trim($categorias));
     
-    // Mapeo de categorías a clases CSS (se puede expandir fácilmente)
-    // Se da prioridad a las categorías más específicas primero.
+    // Mapeo de categorías a clases CSS
     $categoriaMap = [
         'star wars' => 'card-star-wars',
         'marvel' => 'card-marvel',

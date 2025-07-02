@@ -56,7 +56,7 @@ if (isset($_GET['eliminar'])) {
             <thead>
                 <tr>
                     <th scope="col">Nombre</th>
-                    <th scope="col">Descripción</th>
+                    <th scope="col" class="col-descripcion">Descripción</th>
                     <th scope="col" class="text-end">Acciones</th>
                 </tr>
             </thead>
@@ -68,9 +68,9 @@ if (isset($_GET['eliminar'])) {
                 <?php else: ?>
                     <?php foreach ($categorias as $categoria): ?>
                         <tr>
-                            <td><?= htmlspecialchars($categoria['nombre_categoria']) ?></td>
-                            <td><?= htmlspecialchars($categoria['descripcion'] ?? 'Sin descripción') ?></td>
-                            <td class="text-end">
+                            <td data-label="Nombre"><?= htmlspecialchars($categoria['nombre_categoria']) ?></td>
+                            <td class="col-descripcion" data-label="Descripción"><?= htmlspecialchars($categoria['descripcion'] ?? 'Sin descripción') ?></td>
+                            <td class="text-end" data-label="Acciones">
                                 <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
                                 <a href="?sec=admin/admin_categorias&eliminar=<?= $categoria['id'] ?>" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar esta categoría?')"><i class="bi bi-trash-fill"></i></a>
                             </td>

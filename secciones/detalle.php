@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_carrito'])) {
     } else {
         $_SESSION['carrito'][$id_producto]++;
     }
-    // Usar un query param para el mensaje para evitar reenvío del formulario
     header('Location: ?sec=detalle&id=' . $id . '&msg=agregado');
     exit;
 }

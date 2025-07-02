@@ -8,6 +8,7 @@ body {
     font-family: 'Montserrat', Arial, sans-serif;
     color: #cbd5e0;
     margin: 0%;
+    overflow-x: hidden;
 }
 
 #starfield {
@@ -411,6 +412,28 @@ footer {
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
+    html, body {
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+    .content-wrapper, .admin-container, .table-responsive, .admin-table {
+        max-width: 100vw !important;
+        overflow-x: auto !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    .admin-table, .table, .table-responsive {
+        min-width: unset !important;
+        width: 100% !important;
+    }
+    .admin-table td, .admin-table th {
+        word-break: break-word !important;
+        white-space: normal !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }
     .card {
         margin-bottom: 1rem;
     }
@@ -418,15 +441,65 @@ footer {
         max-height: 120px;
     }
     .admin-container {
-        padding: 1rem;
-        margin: 0 1rem;
+        padding: 0.5rem;
+        margin: 0 0.2rem;
+        max-width: 100vw;
+        overflow-x: auto;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .admin-table, .admin-table thead, .admin-table tbody, .admin-table tr, .admin-table th, .admin-table td {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+    .admin-table thead {
+        display: none !important;
+    }
+    .admin-table tr {
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        background: rgba(30,41,59,0.85);
+        padding: 1rem 0.5rem;
     }
     .admin-table td {
-        padding: 0.5rem;
+        border: none !important;
+        padding: 0.5rem 0.7rem !important;
+        text-align: left;
+        position: relative;
+    }
+    .admin-table td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #c5a6ff;
+        display: block;
+        margin-bottom: 0.2rem;
+        font-size: 0.95em;
     }
     .img-admin-thumb {
-        width: 40px;
-        height: 40px;
+        max-width: 36px;
+        max-height: 36px;
+    }
+    .col-descripcion,
+    .col-imagen {
+        display: none !important;
+    }
+    .admin-table tfoot,
+    .admin-table tfoot tr,
+    .admin-table tfoot th,
+    .admin-table tfoot td {
+        display: none !important;
+    }
+    .carrito-total-movil {
+        display: block !important;
+    }
+}
+@media (min-width: 769px) {
+    .carrito-total-movil {
+        display: none !important;
     }
 }
 

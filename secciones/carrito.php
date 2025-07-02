@@ -1,8 +1,6 @@
 <?php
 require_once __DIR__ . '/../clases/ProductoDAO.php';
 
-// Quitar producto del carrito (antes de cualquier HTML)
-// (Eliminado: ahora se maneja en index.php)
 
 $carrito = isset($_SESSION['carrito']) ? $_SESSION['carrito'] : [];
 $dao = new ProductoDAO();
@@ -33,7 +31,7 @@ function buscarProducto($productos, $id) {
             <table class="table admin-table">
                 <thead>
                     <tr>
-                        <th>Imagen</th>
+                        <th class="col-imagen">Imagen</th>
                         <th>Producto</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
@@ -49,7 +47,7 @@ function buscarProducto($productos, $id) {
                     $total += $subtotal;
                 ?>
                     <tr>
-                        <td>
+                        <td class="col-imagen" data-label="Imagen">
                             <?php if ($producto->getImagen()): ?>
                                 <img src="<?=htmlspecialchars($producto->getImagen())?>" 
                                      alt="<?=htmlspecialchars($producto->getNombre())?>" 
@@ -60,16 +58,16 @@ function buscarProducto($productos, $id) {
                                 </div>
                             <?php endif; ?>
                         </td>
-                        <td>
+                        <td data-label="Producto">
                             <strong><?=htmlspecialchars($producto->getNombre())?></strong>
-                            <br><small class="text-muted"><?=htmlspecialchars($producto->getDescripcion())?></small>
+                            <br><small class="text-muted col-descripcion"><?=htmlspecialchars($producto->getDescripcion())?></small>
                         </td>
-                        <td>$<?=number_format($producto->getPrecio(), 2)?></td>
-                        <td>
+                        <td data-label="Precio">$<?=number_format($producto->getPrecio(), 2)?></td>
+                        <td data-label="Cantidad">
                             <span class="badge bg-primary fs-6"><?=intval($cantidad)?></span>
                         </td>
-                        <td><strong>$<?=number_format($subtotal, 2)?></strong></td>
-                        <td>
+                        <td data-label="Subtotal"><strong>$<?=number_format($subtotal, 2)?></strong></td>
+                        <td data-label="Acciones">
                             <div class="d-flex gap-2">
                                 <form method="post" style="display: inline;">
                                     <input type="hidden" name="quitar" value="<?=intval($id)?>">
@@ -92,6 +90,11 @@ function buscarProducto($productos, $id) {
                     </tr>
                 </tfoot>
             </table>
+            <!-- Total fuera de la tabla en móvil -->
+            <div class="carrito-total-movil d-md-none text-end mt-3">
+                <span class="fs-5">Total:</span>
+                <span class="fs-4 text-success fw-bold">$<?=number_format($total, 2)?></span>
+            </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mt-4">

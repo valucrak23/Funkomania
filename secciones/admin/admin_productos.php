@@ -45,8 +45,6 @@ if ($busqueda !== '') {
             $row['Descripcion'],
             $row['precio'],
             $row['categorias'],
-            0, // stock (si lo usas)
-            null, // fecha (si lo usas)
             $row['imagen']
         );
     }
@@ -82,12 +80,12 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
+                    <th>NOMBRE</th>
+                    <th class="col-descripcion">DESCRIPCIÓN</th>
+                    <th>PRECIO</th>
                     <th>Categorías</th>
-                    <th>Imagen</th>
-                    <th>Acciones</th>
+                    <th class="col-imagen">IMAGEN</th>
+                    <th>ACCIONES</th>
                 </tr>
             </thead>
             <tbody>
@@ -98,15 +96,15 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                 <?php else: ?>
                     <?php foreach ($productos as $p): ?>
                     <tr>
-                        <td><?= $p->getId() ?></td>
-                        <td><?= htmlspecialchars($p->getNombre()) ?></td>
-                        <td><?= htmlspecialchars(substr($p->getDescripcion(), 0, 80)) . '...' ?></td>
-                        <td>$<?= number_format($p->getPrecio(), 2) ?></td>
-                        <td><?= htmlspecialchars($p->getCategorias()) ?></td>
-                        <td>
+                        <td data-label="ID"><?= $p->getId() ?></td>
+                        <td data-label="Nombre"><?= htmlspecialchars($p->getNombre()) ?></td>
+                        <td class="col-descripcion" data-label="Descripción"><?= htmlspecialchars(substr($p->getDescripcion(), 0, 80)) . '...' ?></td>
+                        <td data-label="Precio">$<?= number_format($p->getPrecio(), 2) ?></td>
+                        <td data-label="Categorías"><?= htmlspecialchars($p->getCategorias()) ?></td>
+                        <td class="col-imagen" data-label="Imagen">
                             <img src="<?= htmlspecialchars($p->getImagen()) ?>" alt="<?= htmlspecialchars($p->getNombre()) ?>" class="img-admin-thumb">
                         </td>
-                        <td>
+                        <td data-label="Acciones">
                             <a href="?sec=admin/agregar_producto&id=<?= $p->getId() ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
                             <a href="?sec=admin/admin_productos&eliminar=<?= $p->getId() ?>" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')"><i class="bi bi-trash-fill"></i></a>
                         </td>
