@@ -9,9 +9,7 @@ class Producto {
     private $nombre;         
     private $descripcion;     
     private $precio;          
-    private $categorias;       
-    private $stock;           
-    private $fecha_lanzamiento; 
+    private $categorias;        
     private $imagen;          
 
     public function __construct($id, $nombre, $descripcion, $precio, $categorias, $stock, $fecha_lanzamiento, $imagen) {
@@ -20,8 +18,6 @@ class Producto {
         $this->descripcion = $descripcion;
         $this->precio = $precio;
         $this->categorias = $categorias;
-        $this->stock = $stock;
-        $this->fecha_lanzamiento = $fecha_lanzamiento;
         $this->imagen = $imagen;
     }
 
@@ -44,14 +40,6 @@ class Producto {
 
     public function getCategorias() {
         return $this->categorias;
-    }
-
-    public function getStock() {
-        return $this->stock;
-    }
-
-    public function getFechaLanzamiento() {
-        return $this->fecha_lanzamiento;
     }
 
     /**

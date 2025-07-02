@@ -322,6 +322,11 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
 
     <!-- Contenedor normal para secciones públicas -->
     <main class="container my-4 flex-grow-1">
+        <?php if (isset($_GET['msg']) && $_GET['msg'] === 'logout_first'): ?>
+            <div class="alert alert-warning text-center">
+                <i class="bi bi-exclamation-triangle-fill"></i> Debes cerrar sesión para acceder al login de administrador.
+            </div>
+        <?php endif; ?>
         <?php
         // Incluir la página de la sección
         if (file_exists($pagina)) {

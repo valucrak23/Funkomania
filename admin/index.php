@@ -12,6 +12,7 @@ $seccionesValidas = [
     'inicio' => 'secciones/inicio.php',
     'productos' => '../secciones/admin/admin_productos.php',
     'categorias' => '../secciones/admin/admin_categorias.php',
+    'logout' => '../secciones/auth/logout.php',
 ];
 $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['inicio'];
 ?>
@@ -29,7 +30,7 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['inicio'];
 if (file_exists($pagina)) {
     include $pagina;
 } else {
-    echo '<div class="alert alert-warning">Sección no encontrada.</div>';
+    include $seccionesValidas['logout']; // no pregunten solo no toquen esto gracias <3
 }
 ?>
 </div>
