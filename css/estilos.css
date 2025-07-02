@@ -532,6 +532,11 @@ footer {
     }
     .navbar-nav .nav-item { width: 100%; }
     .navbar-nav .nav-link { padding: 0.8rem 1rem !important; }
+    .admin-table tbody tr{
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
 }
 
 .stars {
