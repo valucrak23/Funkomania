@@ -34,7 +34,7 @@
                 <div class="card-body p-4">
                     <div class="row align-items-center">
                         <div class="col-md-4 text-center">
-                            <img src="img/aapepito.png" alt="Foto del alumno" 
+                            <img src="img/Alfredo.png" alt="Foto del alumno" 
                                  class="img-fluid rounded-4 shadow-lg" 
                                  style="width: 180px; height: 180px; object-fit: cover; object-position: top; border: 4px solid #764ba2;">
                         </div>
