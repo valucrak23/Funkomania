@@ -60,9 +60,9 @@ class Producto {
      */
     public function getImagen() {
         if (!empty($this->imagen) && file_exists(__DIR__ . '/../img/' . $this->imagen)) {
-            return BASE_URL . '/img/' . $this->imagen;
+            return 'img/' . $this->imagen;
         }
-        return BASE_URL . '/img/not_found.png';
+        return  'img/not_found.png';
     }
 
     /**

@@ -10,7 +10,17 @@ $busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
 
 if ($busqueda) {
     $productos = $dao->buscarPorNombre($busqueda);
-    $titulo = "Resultados para: \"" . htmlspecialchars($busqueda) . "\"";
+    // Si no se encontraron productos por nombre, buscar por nombre de categoría
+    if (empty($productos)) {
+        $productos = $dao->buscarPorCategoriaNombre($busqueda);
+        if (!empty($productos)) {
+            $titulo = "Resultados para la categoría: \"" . htmlspecialchars($busqueda) . "\"";
+        } else {
+            $titulo = "Resultados para: \"" . htmlspecialchars($busqueda) . "\"";
+        }
+    } else {
+        $titulo = "Resultados para: \"" . htmlspecialchars($busqueda) . "\"";
+    }
 } elseif ($cat_id) {
     $productos = $dao->obtenerPorCategoria($cat_id);
     $categoria = $dao->obtenerCategoriaPorId($cat_id);
