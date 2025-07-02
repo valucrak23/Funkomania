@@ -1,4 +1,5 @@
 <?php
+ob_start();
 // Iniciar la sesión en cada carga de página
 session_start();
 
@@ -339,3 +340,4 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
     <script src="js/fondo-estrellas.js"></script>
 </body>
 </html>
+<?php ob_end_flush(); ?>

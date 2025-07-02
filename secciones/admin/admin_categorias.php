@@ -6,6 +6,18 @@ if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin'
     header('Location: ../../index.php');
     exit;
 }
+require_once __DIR__ . '/../../clases/ProductoDAO.php';
+require_once __DIR__ . '/../../clases/Producto.php';
+require_once __DIR__ . '/../../config/database.php';
+
+// Eliminar categoría (mover esto antes de cualquier salida)
+if (isset($_GET['eliminar'])) {
+    $db = Database::getInstance();
+    $id = intval($_GET['eliminar']);
+    $db->query("DELETE FROM categoria WHERE id = ?", [$id]);
+    header('Location: ?sec=admin/admin_categorias&msg=eliminado');
+    exit;
+}
 // Esta página será incluida por index.php, que ya tiene el DAO.
 // Las categorías se cargan en la lógica de admin_categorias en index.php.
 ?>
@@ -51,7 +63,7 @@ if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin'
             <tbody>
                 <?php if (empty($categorias)): ?>
                     <tr>
-                        <td colspan="3" class="text-center">No hay categorías para mostrar.</td>
+                        <td colspan="3" class="text-center">No se encontraron categorías.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($categorias as $categoria): ?>
