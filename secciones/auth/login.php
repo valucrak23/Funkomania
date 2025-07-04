@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['usuario_nombre'] = $usuario['nombre_completo'];
                 $_SESSION['usuario_nivel'] = $usuario['Nivel'];
                 if ($_SESSION['usuario_nivel'] === 'Admin') {
-                    header('Location: index.php?sec=admin/admin_productos');
+                header('Location: index.php?sec=admin/admin_productos');
                 } else {
                     header('Location: index.php');
                 }

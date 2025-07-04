@@ -94,22 +94,22 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                         <td colspan="7" class="text-center">No se encontraron productos.</td>
                     </tr>
                 <?php else: ?>
-                    <?php foreach ($productos as $p): ?>
-                    <tr>
+                <?php foreach ($productos as $p): ?>
+                <tr>
                         <td data-label="ID"><?= $p->getId() ?></td>
                         <td data-label="Nombre"><?= htmlspecialchars($p->getNombre()) ?></td>
                         <td class="col-descripcion" data-label="Descripción"><?= htmlspecialchars(substr($p->getDescripcion(), 0, 80)) . '...' ?></td>
                         <td data-label="Precio">$<?= number_format($p->getPrecio(), 2) ?></td>
                         <td data-label="Categorías"><?= htmlspecialchars($p->getCategorias()) ?></td>
                         <td class="col-imagen" data-label="Imagen">
-                            <img src="<?= htmlspecialchars($p->getImagen()) ?>" alt="<?= htmlspecialchars($p->getNombre()) ?>" class="img-admin-thumb">
-                        </td>
+                        <img src="<?= htmlspecialchars($p->getImagen()) ?>" alt="<?= htmlspecialchars($p->getNombre()) ?>" class="img-admin-thumb">
+                    </td>
                         <td data-label="Acciones">
-                            <a href="?sec=admin/agregar_producto&id=<?= $p->getId() ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                            <a href="?sec=admin/admin_productos&eliminar=<?= $p->getId() ?>" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')"><i class="bi bi-trash-fill"></i></a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
+                        <a href="?sec=admin/agregar_producto&id=<?= $p->getId() ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
+                        <a href="?sec=admin/admin_productos&eliminar=<?= $p->getId() ?>" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')"><i class="bi bi-trash-fill"></i></a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
                 <?php endif; ?>
             </tbody>
         </table>
