@@ -60,21 +60,30 @@ function buscarProducto($productos, $id) {
                         </td>
                         <td data-label="Producto">
                             <strong><?=htmlspecialchars($producto->getNombre())?></strong>
-                            <br><small class="text-muted col-descripcion"><?=htmlspecialchars($producto->getDescripcion())?></small>
                         </td>
                         <td data-label="Precio">$<?=number_format($producto->getPrecio(), 2)?></td>
                         <td data-label="Cantidad">
-                            <span class="badge bg-primary fs-6"><?=intval($cantidad)?></span>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="<?= $cantidad > 1 ? '?sec=carrito&modificar_cantidad=' . intval($id) . '&accion=disminuir' : '#' ?>" 
+                                   class="btn btn-sm btn-outline-secondary btn-tematico <?= $cantidad <= 1 ? 'disabled' : '' ?>"
+                                   <?= $cantidad <= 1 ? 'onclick="return false;"' : '' ?>>
+                                    <i class="bi bi-dash"></i>
+                                </a>
+                                <span class="badge bg-primary fs-6 px-3"><?=intval($cantidad)?></span>
+                                <a href="<?= $cantidad < 3 ? '?sec=carrito&modificar_cantidad=' . intval($id) . '&accion=aumentar' : '#' ?>" 
+                                   class="btn btn-sm btn-outline-secondary btn-tematico <?= $cantidad >= 3 ? 'disabled' : '' ?>"
+                                   <?= $cantidad >= 3 ? 'onclick="return false;"' : '' ?>>
+                                    <i class="bi bi-plus"></i>
+                                </a>
+                            </div>
                         </td>
                         <td data-label="Subtotal"><strong>$<?=number_format($subtotal, 2)?></strong></td>
                         <td data-label="Acciones">
                             <div class="d-flex gap-2">
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="quitar" value="<?=intval($id)?>">
-                                    <button type="submit" class="btn btn-danger btn-sm btn-tematico" onclick="return confirm('¿Estás seguro de que quieres quitar este producto del carrito?')">
-                                        <i class="bi bi-trash"></i> Quitar
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-danger btn-sm btn-tematico" 
+                                        onclick="confirmarQuitarProducto(<?=intval($id)?>, '<?=htmlspecialchars($producto->getNombre())?>')">
+                                    <i class="bi bi-trash"></i> Quitar
+                                </button>
                                 <a href="?sec=detalle&id=<?=intval($id)?>" class="btn btn-info btn-sm btn-tematico">
                                     <i class="bi bi-eye"></i> Ver
                                 </a>
@@ -101,9 +110,83 @@ function buscarProducto($productos, $id) {
             <a href="?sec=productos" class="btn btn-primary btn-tematico">
                 <i class="bi bi-arrow-left"></i> Seguir comprando
             </a>
-            <button class="btn btn-success btn-tematico btn-lg" disabled>
-                <i class="bi bi-credit-card"></i> Proceder al pago
-            </button>
+            <?php if (isset($_SESSION['usuario_id'])): ?>
+                <a href="?sec=checkout" class="btn btn-success btn-tematico btn-lg">
+                    <i class="bi bi-credit-card"></i> Proceder al pago
+                </a>
+            <?php else: ?>
+                <button type="button" class="btn btn-success btn-tematico btn-lg" 
+                        onclick="mostrarModalLoginCheckout()">
+                    <i class="bi bi-credit-card"></i> Proceder al pago
+                </button>
+            <?php endif; ?>
         </div>
     <?php endif; ?>
+</div>
+
+<!-- Modal de login requerido para checkout -->
+<div class="modal fade" id="modalLoginCheckout" tabindex="-1" aria-labelledby="modalLoginCheckoutLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLoginCheckoutLabel">
+                    <i class="bi bi-lock-fill text-warning"></i> Login requerido
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Para proceder al pago, necesitas iniciar sesión.</p>
+                <p class="text-muted small">Una vez que inicies sesión, podrás completar tu compra.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <a href="?sec=auth/login" class="btn btn-primary">
+                    <i class="bi bi-box-arrow-in-right"></i> Ir al Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarModalLoginCheckout() {
+    const modal = new bootstrap.Modal(document.getElementById('modalLoginCheckout'));
+    modal.show();
+}
+
+function confirmarQuitarProducto(id, nombre) {
+    document.getElementById('nombreProductoQuitar').textContent = nombre;
+    document.getElementById('btnConfirmarQuitarProducto').href = '?sec=carrito&quitar=' + id;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modalQuitarProducto'));
+    modal.show();
+}
+</script>
+
+<!-- Modal de confirmación para quitar producto del carrito -->
+<div class="modal fade" id="modalQuitarProducto" tabindex="-1" aria-labelledby="modalQuitarProductoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalQuitarProductoLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-warning"></i> Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres quitar <strong id="nombreProductoQuitar"></strong> del carrito?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <a href="#" id="btnConfirmarQuitarProducto" class="btn btn-danger">
+                    <i class="bi bi-trash-fill"></i> Quitar
+                </a>
+            </div>
+        </div>
+    </div>
 </div> 

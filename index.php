@@ -18,13 +18,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quitar'])) {
     exit;
 }
 
+// --- Lógica para quitar producto del carrito (GET) ---
+if (isset($_GET['quitar'])) {
+    $id = intval($_GET['quitar']);
+    if (isset($_SESSION['carrito'][$id])) {
+        unset($_SESSION['carrito'][$id]);
+    }
+    header('Location: ?sec=carrito');
+    exit;
+}
+
+// --- Lógica para modificar cantidades del carrito ---
+if (isset($_GET['modificar_cantidad'])) {
+    $id = intval($_GET['modificar_cantidad']);
+    $accion = $_GET['accion'] ?? '';
+    
+    if (isset($_SESSION['carrito'][$id])) {
+        if ($accion === 'aumentar' && $_SESSION['carrito'][$id] < 3) {
+            $_SESSION['carrito'][$id]++;
+        } elseif ($accion === 'disminuir' && $_SESSION['carrito'][$id] > 1) {
+            $_SESSION['carrito'][$id]--;
+        }
+    }
+    header('Location: ?sec=carrito');
+    exit;
+}
+
 // --- Lógica de Carrito ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_carrito'])) {
+    // Verificar si el usuario está logueado
+    if (!isset($_SESSION['usuario_id'])) {
+        // Si no está logueado, redirigir al login
+        header('Location: index.php?sec=auth/login&msg=login_required');
+        exit;
+    }
+    
     $id_producto = intval($_POST['agregar_carrito']);
     if (!isset($_SESSION['carrito'][$id_producto])) {
         $_SESSION['carrito'][$id_producto] = 1;
     } else {
-        $_SESSION['carrito'][$id_producto]++;
+        // Verificar que no exceda el límite de 3
+        if ($_SESSION['carrito'][$id_producto] < 3) {
+            $_SESSION['carrito'][$id_producto]++;
+        }
     }
     // Redirección para evitar reenvío de formulario
     header('Location: ' . $_SERVER['HTTP_REFERER'] . '&msg=agregado');
@@ -40,6 +76,7 @@ $seccionesValidas = [
     'contacto' => 'secciones/contacto.php',
     'contacto_procesar' => 'secciones/contacto_procesar.php',
     'carrito' => 'secciones/carrito.php',
+    'checkout' => 'secciones/checkout.php',
     'alumno' => 'secciones/alumno.php',
     '404' => 'secciones/404.php',
     // Rutas de Admin
@@ -287,10 +324,7 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
                     <li class="nav-item"><a class="nav-link" href="?sec=alumno">Alumnos</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="?sec=carrito">
-                            <i class="bi bi-cart-fill"></i> Carrito 
-                            <span class="badge bg-primary rounded-pill">
-                                <?= !empty($_SESSION['carrito']) ? count($_SESSION['carrito']) : 0 ?>
-                            </span>
+                            <i class="bi bi-cart-fill"></i> Carrito <span class="badge bg-primary rounded-pill"><?= !empty($_SESSION['carrito']) ? count($_SESSION['carrito']) : 0 ?></span>
                         </a>
                     </li>
                     <!-- Lógica de Navegación de Admin -->
@@ -314,6 +348,12 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
                                 </a>
                             </li>
                         <?php endif; ?>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="?sec=auth/login">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </li>
                     <?php endif; ?>
                 </ul>
             </div>

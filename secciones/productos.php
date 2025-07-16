@@ -117,13 +117,55 @@ function getCategoriaClass($categorias) {
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title flex-grow-1"><?=htmlspecialchars($producto->getNombre())?></h5>
                     <p class="card-text fw-bold fs-5 text-success mb-3">$<?=number_format($producto->getPrecio(), 2)?></p>
-                    <form method="post" class="z-2">
-                        <input type="hidden" name="agregar_carrito" value="<?=$producto->getId()?>">
-                        <button type="submit" class="btn btn-primary btn-tematico w-100"><i class="bi bi-cart-plus"></i> Agregar</button>
-                    </form>
+                    <?php if (isset($_SESSION['usuario_id'])): ?>
+                        <form method="post" class="z-2">
+                            <input type="hidden" name="agregar_carrito" value="<?=$producto->getId()?>">
+                            <button type="submit" class="btn btn-primary btn-tematico w-100"><i class="bi bi-cart-plus"></i> Agregar</button>
+                        </form>
+                    <?php else: ?>
+                        <button type="button" class="btn btn-primary btn-tematico w-100" 
+                                onclick="mostrarModalLogin(<?=$producto->getId()?>, '<?=htmlspecialchars($producto->getNombre())?>')">
+                            <i class="bi bi-cart-plus"></i> Agregar
+                        </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+
+<!-- Modal de login requerido -->
+<div class="modal fade" id="modalLoginRequerido" tabindex="-1" aria-labelledby="modalLoginRequeridoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLoginRequeridoLabel">
+                    <i class="bi bi-lock-fill text-warning"></i> Login requerido
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Para agregar <strong id="nombreProductoLogin"></strong> al carrito, necesitas iniciar sesión.</p>
+                <p class="text-muted small">Una vez que inicies sesión, podrás agregar productos a tu carrito.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <a href="?sec=auth/login" class="btn btn-primary">
+                    <i class="bi bi-box-arrow-in-right"></i> Ir al Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function mostrarModalLogin(idProducto, nombreProducto) {
+    document.getElementById('nombreProductoLogin').textContent = nombreProducto;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modalLoginRequerido'));
+    modal.show();
+}
+</script>

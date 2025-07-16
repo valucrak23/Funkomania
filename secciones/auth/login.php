@@ -53,6 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p class="text-muted">Inicia sesión para gestionar la tienda.</p>
         </div>
         
+        <?php if (isset($_GET['msg']) && $_GET['msg'] === 'login_required'): ?>
+            <div class="alert alert-info" role="alert">
+                <i class="bi bi-cart-fill"></i> <strong>¡Inicia sesión para continuar!</strong><br>
+                Necesitas estar logueado para agregar productos al carrito.
+            </div>
+        <?php endif; ?>
+        
         <?php if ($error): ?>
             <div class="alert alert-danger" role="alert">
                 <i class="bi bi-exclamation-triangle-fill"></i> <?= htmlspecialchars($error) ?>
