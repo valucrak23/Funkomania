@@ -226,6 +226,8 @@ footer {
     overflow: hidden;
     border: none;
     box-shadow: none;
+    table-layout: fixed;
+    width: 100%;
 }
 .admin-table thead th { 
     background: rgba(12, 10, 26, 0.9) !important;
@@ -239,6 +241,7 @@ footer {
 .admin-table tbody tr {
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: table-row !important;
 }
 .admin-table tbody tr:last-child {
     border-bottom: none;
@@ -265,6 +268,7 @@ footer {
         radial-gradient(1px 1px at 95% 90%, rgba(255, 255, 255, 0.3), transparent);
     background-size: 100% 100%;
     transition: all 0.3s ease;
+    display: table-cell !important;
 }
 .admin-table tfoot tr {
     background: rgba(45, 55, 72, 0.5);
@@ -500,6 +504,24 @@ footer {
 @media (min-width: 769px) {
     .carrito-total-movil {
         display: none !important;
+    }
+    /* Asegurar que la tabla admin mantenga su estructura correcta */
+    .admin-table {
+        display: table !important;
+        width: 100% !important;
+    }
+    .admin-table thead {
+        display: table-header-group !important;
+    }
+    .admin-table tbody {
+        display: table-row-group !important;
+    }
+    .admin-table tr {
+        display: table-row !important;
+    }
+    .admin-table th,
+    .admin-table td {
+        display: table-cell !important;
     }
 }
 
