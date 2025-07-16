@@ -501,11 +501,6 @@ footer {
     .carrito-total-movil {
         display: none !important;
     }
-    .admin-table tbody tr{
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-    }
 }
 
 @media (max-width: 991.98px) {

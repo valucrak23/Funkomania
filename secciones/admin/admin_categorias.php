@@ -72,7 +72,10 @@ if (isset($_GET['eliminar'])) {
                             <td class="col-descripcion" data-label="Descripción"><?= htmlspecialchars($categoria['descripcion'] ?? 'Sin descripción') ?></td>
                             <td class="text-end" data-label="Acciones">
                                 <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                <a href="?sec=admin/admin_categorias&eliminar=<?= $categoria['id'] ?>" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar esta categoría?')"><i class="bi bi-trash-fill"></i></a>
+                                <button type="button" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" 
+                                        onclick="confirmarEliminarCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre_categoria']) ?>')">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -80,4 +83,40 @@ if (isset($_GET['eliminar'])) {
             </tbody>
         </table>
     </div>
-</div> 
+</div>
+
+<!-- Modal de confirmación para eliminar categoría -->
+<div class="modal fade" id="modalEliminarCategoria" tabindex="-1" aria-labelledby="modalEliminarCategoriaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarCategoriaLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar la categoría <strong id="nombreCategoriaEliminar"></strong>?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <a href="#" id="btnConfirmarEliminarCategoria" class="btn btn-danger">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmarEliminarCategoria(id, nombre) {
+    document.getElementById('nombreCategoriaEliminar').textContent = nombre;
+    document.getElementById('btnConfirmarEliminarCategoria').href = '?sec=admin/admin_categorias&eliminar=' + id;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modalEliminarCategoria'));
+    modal.show();
+}
+</script> 

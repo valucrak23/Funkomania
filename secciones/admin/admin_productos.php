@@ -44,7 +44,9 @@ if ($busqueda !== '') {
             $row['Nombre'],
             $row['Descripcion'],
             $row['precio'],
-            $row['categorias'],
+            $row['categorias'] ?? 'Sin categoría',
+            0, // stock
+            null, // fecha_lanzamiento
             $row['imagen']
         );
     }
@@ -106,7 +108,10 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                     </td>
                         <td data-label="Acciones">
                         <a href="?sec=admin/agregar_producto&id=<?= $p->getId() ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                        <a href="?sec=admin/admin_productos&eliminar=<?= $p->getId() ?>" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')"><i class="bi bi-trash-fill"></i></a>
+                        <button type="button" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" 
+                                onclick="confirmarEliminarProducto(<?= $p->getId() ?>, '<?= htmlspecialchars($p->getNombre()) ?>')">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -114,4 +119,40 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
             </tbody>
         </table>
     </div>
-</div> 
+</div>
+
+<!-- Modal de confirmación para eliminar producto -->
+<div class="modal fade" id="modalEliminarProducto" tabindex="-1" aria-labelledby="modalEliminarProductoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarProductoLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-danger"></i> Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que quieres eliminar el producto <strong id="nombreProductoEliminar"></strong>?</p>
+                <p class="text-muted small">Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <a href="#" id="btnConfirmarEliminarProducto" class="btn btn-danger">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmarEliminarProducto(id, nombre) {
+    document.getElementById('nombreProductoEliminar').textContent = nombre;
+    document.getElementById('btnConfirmarEliminarProducto').href = '?sec=admin/admin_productos&eliminar=' + id;
+    
+    const modal = new bootstrap.Modal(document.getElementById('modalEliminarProducto'));
+    modal.show();
+}
+</script> 
