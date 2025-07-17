@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/../config/database.php');
+require_once(__DIR__ . '/Utils.php');
 
 /**
  * Clase para manejar las operaciones de base de datos de usuarios
@@ -160,25 +161,17 @@ class UsuarioDAO
         }
     }
 
-    /**
-     * Validar formato de email
-     */
+    // Métodos de validación usando Utils
     public function validarEmail($email) {
-        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+        return Utils::validarEmail($email);
     }
 
-    /**
-     * Validar contraseña (mínimo 6racteres)
-     */
     public function validarPassword($password) {
-        return strlen($password) >= 6;
+        return Utils::validarPassword($password);
     }
 
-    /**
-     * Validar nombre completo (mínimo 2racteres)
-     */
     public function validarNombre($nombre) {
-        return strlen(trim($nombre)) >= 2;
+        return Utils::validarNombre($nombre);
     }
 }
 ?> 

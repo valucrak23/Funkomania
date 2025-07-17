@@ -126,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Limpiar carrito después de la compra exitosa
             unset($_SESSION['carrito']);
             
-            // Redirigir a página de confirmación con el ID de la orden
-            header('Location: index.php?sec=checkout&msg=compra_exitosa&orden_id=' . $orden_id);
+            // Redirigir al carrito con mensaje de éxito
+            header('Location: index.php?sec=carrito&msg=compra_exitosa&orden_id=' . $orden_id);
             exit;
         } else {
             $errores[] = 'Error al procesar la orden. Por favor, inténtalo de nuevo.';
@@ -143,33 +143,7 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
         <div class="col-lg-8">
             <h2 class="mb-4"><i class="bi bi-credit-card-fill"></i> Confirmar Compra</h2>
             
-            <?php if ($msg === 'compra_exitosa'): ?>
-                <?php
-                $orden_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
-                $ordenDAO = new OrdenDAO();
-                $orden = $ordenDAO->obtenerOrdenPorId($orden_id, $_SESSION['usuario_id']);
-                ?>
-                <!-- Modal de confirmación de compra exitosa -->
-                <div class="alert alert-success text-center mb-4">
-                    <div class="mb-3"><i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i></div>
-                    <h4 class="text-success mb-3">¡Compra Exitosa!</h4>
-                    <p class="mb-3">Tu pedido ha sido procesado correctamente.</p>
-                    <div class="alert alert-light d-inline-block">
-                        <strong>Número de orden:</strong> #<?= $orden_id ?><br>
-                        <?php if ($orden): ?>
-                            <strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($orden['fecha_orden'])) ?><br>
-                            <strong>Total:</strong> $<?= number_format($orden['total'], 2) ?>
-                        <?php endif; ?>
-                    </div>
-                    <p class="text-muted mt-3">Recibirás un email de confirmación con los detalles de tu pedido.</p>
-                    <div class="mt-4">
-                        <a href="?sec=productos" class="btn btn-primary btn-tematico me-2"><i class="bi bi-shop"></i> Seguir comprando</a>
-                        <a href="?sec=historial" class="btn btn-outline-primary btn-tematico"><i class="bi bi-clock-history"></i> Ver mi historial</a>
-                    </div>
-                </div>
-            <?php else: ?>
-                
-                <?php if (!empty($errores)): ?>
+            <?php if (!empty($errores)): ?>
                     <div class="alert alert-danger">
                         <i class="bi bi-exclamation-triangle-fill"></i> 
                         <strong>Por favor, corrige los siguientes errores:</strong>
@@ -296,7 +270,6 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                         </a>
                     </div>
                 </form>
-            <?php endif; ?>
         </div>
 
         <!-- Resumen del pedido -->

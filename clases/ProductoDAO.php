@@ -264,197 +264,6 @@ class ProductoDAO {
     }
 
     /**
-     * Obtener todas las categorías
-     */
-    public function obtenerCategorias() {
-        try {
-            // Incluir todas las categorías, incluyendo "Sin Categoría"
-            $sql = "SELECT id, nombre_categoria, descripcion FROM categoria ORDER BY nombre_categoria";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error al obtener categorías: " . $e->getMessage());
-            // En un entorno de producción, podría ser mejor devolver un array vacío
-            // y manejar el error de forma más elegante en la vista.
-            die("DEPURACIÓN: ¡ERROR FATAL al intentar obtener las categorías!: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Obtener todas las categorías incluyendo "Sin Categoría" para formularios de administración
-     */
-    public function obtenerCategoriasParaAdmin() {
-        try {
-            $sql = "SELECT id, nombre_categoria, descripcion FROM categoria ORDER BY nombre_categoria";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            error_log("Error al obtener categorías para admin: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Verificar si una categoría es protegida (no se puede eliminar)
-     */
-    public function categoriaEsProtegida($categoria_id) {
-        // La categoría "Sin Categoría" (ID 11) es protegida
-        return $categoria_id == 11;
-    }
-
-    /**
-     * Insertar una nueva categoría
-     */
-    public function insertarCategoria($nombre, $descripcion) {
-        try {
-            $sql = "INSERT INTO categoria (nombre_categoria, descripcion) VALUES (?, ?)";
-            return $this->db->query($sql, [$nombre, $descripcion]);
-        } catch (Exception $e) {
-            error_log("Error al insertar categoría: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Actualizar una categoría existente
-     */
-    public function actualizarCategoria($id, $nombre, $descripcion) {
-        try {
-            $sql = "UPDATE categoria SET nombre_categoria = ?, descripcion = ? WHERE id = ?";
-            return $this->db->query($sql, [$nombre, $descripcion, $id]);
-        } catch (Exception $e) {
-            error_log("Error al actualizar categoría: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Eliminar una categoría
-     */
-    public function eliminarCategoria($id) {
-        try {
-            // Proteger la categoría "Sin Categoría" (ID 11) - no se puede eliminar
-            if ($id == 11) {
-                return false;
-            }
-            
-            // Opcional: Antes de eliminar, podrías verificar si algún producto usa esta categoría.
-            // Por simplicidad, aquí la eliminamos directamente.
-            $sql = "DELETE FROM categoria WHERE id = ?";
-            return $this->db->query($sql, [$id]);
-        } catch (Exception $e) {
-            error_log("Error al eliminar categoría: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Obtener el ID de una categoría por nombre
-     */
-    private function obtenerCategoriaId($nombreCategoria) {
-        try {
-            $sql = "SELECT id FROM categoria WHERE nombre_categoria = ?";
-            $stmt = $this->db->query($sql, [$nombreCategoria]);
-            $row = $stmt->fetch();
-            
-            if ($row) {
-                return $row['id'];
-            }
-            
-            // Si la categoría no existe, la creamos
-            $sql = "INSERT INTO categoria (nombre_categoria) VALUES (?)";
-            $this->db->query($sql, [$nombreCategoria]);
-            return $this->db->getConnection()->lastInsertId();
-        } catch (Exception $e) {
-            error_log("Error en obtenerCategoriaId: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Obtener productos con información completa de categoría
-     */
-    public function obtenerProductosConCategoria() {
-        try {
-            $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, 
-                           c.id as categoria_id, c.nombre_categoria 
-                    FROM productos p 
-                    LEFT JOIN categoria c ON p.categoria_id = c.id 
-                    ORDER BY p.Nombre";
-            $stmt = $this->db->query($sql);
-            return $stmt->fetchAll();
-        } catch (Exception $e) {
-            error_log("Error en obtenerProductosConCategoria: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Obtener una categoría por su ID
-     */
-    public function obtenerCategoriaPorId($id) {
-        try {
-            $sql = "SELECT * FROM categoria WHERE id = ?";
-            $stmt = $this->db->query($sql, [$id]);
-            $row = $stmt->fetch();
-            return $row ? $row : null;
-        } catch (Exception $e) {
-            error_log("Error en obtenerCategoriaPorId: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Obtener todos los productos con paginación
-     */
-    public function obtenerTodosPaginados($limite = 12, $offset = 0) {
-        try {
-            $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, c.nombre_categoria 
-                    FROM productos p 
-                    LEFT JOIN categoria c ON p.categoria_id = c.id 
-                    ORDER BY p.Nombre
-                    LIMIT ? OFFSET ?";
-            $stmt = $this->db->query($sql, [$limite, $offset]);
-            $productos = [];
-            
-            while ($row = $stmt->fetch()) {
-                // Solo usar imagen por defecto si está vacía o es NULL
-                $imagen = empty($row['imagen']) ? 'img/not_found.png' : 'img/' . $row['imagen'];
-                $productos[] = new Producto(
-                    $row['id'],
-                    $row['Nombre'],
-                    $row['Descripcion'],
-                    $row['precio'],
-                    $row['nombre_categoria'] ?? 'Sin categoría',
-                    0, // stock - no existe en tu tabla
-                    null, // fecha_lanzamiento - no existe en tu tabla
-                    $imagen
-                );
-            }
-            
-            return $productos;
-        } catch (Exception $e) {
-            error_log("Error en obtenerTodosPaginados: " . $e->getMessage());
-            return [];
-        }
-    }
-
-    /**
-     * Contar total de productos
-     */
-    public function contarProductos() {
-        try {
-            $sql = "SELECT COUNT(*) as total FROM productos";
-            $stmt = $this->db->query($sql);
-            $row = $stmt->fetch();
-            return $row['total'] ?? 0;
-        } catch (Exception $e) {
-            error_log("Error en contarProductos: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    /**
      * Obtener todos los productos para la tabla de administración.
      * Devuelve un array asociativo.
      */
@@ -518,9 +327,14 @@ class ProductoDAO {
             
             $productos = [];
             while ($row = $stmt->fetch()) {
+                $categorias = $row['categorias'] ?? null;
+                // Si no hay categorías, usar "Sin Categoría"
+                if (empty($categorias)) {
+                    $categorias = 'Sin Categoría';
+                }
                 $productos[] = new Producto(
                     $row['id'], $row['Nombre'], $row['Descripcion'], $row['precio'],
-                    $row['categorias'] ?? 'Sin categoría', 0, null, $row['imagen']
+                    $categorias, 0, null, $row['imagen']
                 );
             }
             return $productos;
@@ -581,23 +395,10 @@ class ProductoDAO {
     }
 
     /**
-     * Obtener productos de una categoría específica
+     * Obtener productos por categoría (alias para mantener compatibilidad)
      */
     public function obtenerProductosPorCategoria($categoria_id) {
-        try {
-            $sql = "SELECT p.id, p.Nombre, p.imagen 
-                    FROM productos p 
-                    INNER JOIN producto_categoria pc ON p.id = pc.producto_id 
-                    WHERE pc.categoria_id = ? 
-                    ORDER BY p.Nombre 
-                    LIMIT 5";
-            $stmt = $this->db->query($sql, [$categoria_id]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        } catch (Exception $e) {
-            error_log("Error en obtenerProductosPorCategoria: " . $e->getMessage());
-            return [];
-        }
+        return $this->obtenerPorCategoria($categoria_id);
     }
 }
 ?> 

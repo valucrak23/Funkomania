@@ -21,11 +21,147 @@ function buscarProducto($productos, $id) {
         <a href="?sec=productos" class="btn btn-primary btn-tematico"><i class="bi bi-arrow-left"></i> Seguir comprando</a>
     </div>
 
-    <?php if (empty($carrito)): ?>
-        <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Tu carrito está vacío. 
-            <a href="?sec=productos" class="alert-link">¡Explora nuestros productos!</a>
-        </div>
+    <?php 
+    $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
+    $orden_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
+    
+    if (empty($carrito)): 
+        if ($msg === 'compra_exitosa' && $orden_id > 0): ?>
+            <!-- Mensaje de confirmación de compra exitosa -->
+            <div class="alert alert-success border-success text-center mb-4 success-message" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); border: 2px solid #28a745; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem; animation: bounce 1s ease-in-out;"></i>
+                </div>
+                <h3 class="text-success mb-3 fw-bold">¡Compra Realizada con Éxito!</h3>
+                <p class="mb-4 fs-5">Tu pedido ha sido procesado correctamente y está siendo preparado.</p>
+                
+                <div class="alert alert-light border d-inline-block mb-4" style="background: rgba(255,255,255,0.8);">
+                    <div class="row text-start">
+                        <div class="col-md-6">
+                            <strong class="text-primary">Número de orden:</strong><br>
+                            <span class="fs-4 fw-bold text-success">#<?= $orden_id ?></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong class="text-primary">Fecha:</strong><br>
+                            <span class="fs-5"><?= date('d/m/Y H:i') ?></span><br>
+                            <strong class="text-primary">Estado:</strong><br>
+                            <span class="fs-5 text-success">Procesado</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-muted mb-4">
+                    <i class="bi bi-envelope-check"></i> 
+                    Recibirás un email de confirmación con los detalles de tu pedido.
+                </p>
+                
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="?sec=productos" class="btn btn-primary btn-lg btn-tematico">
+                        <i class="bi bi-shop"></i> Seguir Comprando
+                    </a>
+                    <a href="?sec=historial" class="btn btn-outline-primary btn-lg btn-tematico">
+                        <i class="bi bi-clock-history"></i> Ver Mi Historial
+                    </a>
+                </div>
+            </div>
+            
+            <style>
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {
+                    transform: translateY(0);
+                }
+                40% {
+                    transform: translateY(-10px);
+                }
+                60% {
+                    transform: translateY(-5px);
+                }
+            }
+            
+            .success-message {
+                animation: slideInDown 0.5s ease-out;
+            }
+            
+            @keyframes slideInDown {
+                from {
+                    transform: translateY(-50px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+            </style>
+            
+            <script>
+            // Mostrar mensaje de éxito con efecto
+            document.addEventListener('DOMContentLoaded', function() {
+                const successMessage = document.querySelector('.alert-success');
+                if (successMessage) {
+                    successMessage.classList.add('success-message');
+                    
+                    // Hacer scroll suave hacia el mensaje
+                    successMessage.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                    
+                    // Agregar efecto de confeti virtual (partículas)
+                    createConfetti();
+                }
+            });
+            
+            // Función para crear efecto de confeti
+            function createConfetti() {
+                const colors = ['#28a745', '#20c997', '#17a2b8', '#6f42c1', '#e83e8c'];
+                const confettiCount = 50;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.position = 'fixed';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.top = '-10px';
+                        confetti.style.width = '8px';
+                        confetti.style.height = '8px';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = '50%';
+                        confetti.style.pointerEvents = 'none';
+                        confetti.style.zIndex = '9999';
+                        confetti.style.animation = 'confettiFall 3s linear forwards';
+                        
+                        document.body.appendChild(confetti);
+                        
+                        // Remover confeti después de la animación
+                        setTimeout(() => {
+                            if (confetti.parentNode) {
+                                confetti.parentNode.removeChild(confetti);
+                            }
+                        }, 3000);
+                    }, i * 50);
+                }
+            }
+            </script>
+            
+            <style>
+            @keyframes confettiFall {
+                0% {
+                    transform: translateY(-10px) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+            </style>
+        <?php else: ?>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> Tu carrito está vacío. 
+                <a href="?sec=productos" class="alert-link">¡Explora nuestros productos!</a>
+            </div>
+        <?php endif; ?>
     <?php else: ?>
         <div class="table-responsive">
             <table class="table admin-table">
