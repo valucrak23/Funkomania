@@ -21,6 +21,7 @@ return [
     'admin/agregar_producto' => 'secciones/admin/agregar_producto.php',
     'admin/admin_categorias' => 'secciones/admin/admin_categorias.php',
     'admin/agregar_categoria' => 'secciones/admin/agregar_categoria.php',
+    'admin/crear_categorias_ejemplo' => 'secciones/admin/crear_categorias_ejemplo.php',
     'admin/admin_usuarios' => 'secciones/admin/admin_usuarios.php',
     'admin/agregar_usuario' => 'secciones/admin/agregar_usuario.php',
     

@@ -74,7 +74,7 @@ class ProductoController {
             $db = Database::getInstance();
             
             if ($id) { // Actualizar
-                $producto_actualizado = new Producto($id, $nombre, $descripcion, $precio, '', null, $imagen_final);
+                $producto_actualizado = new Producto($id, $nombre, $descripcion, $precio, '', null, null, $imagen_final);
                 $dao->actualizar($producto_actualizado);
                 $db->query("DELETE FROM producto_categoria WHERE producto_id = ?", [$id]);
                 foreach ($cats_ids as $catid) {
@@ -82,7 +82,7 @@ class ProductoController {
                 }
                 return ['success' => true, 'mensaje' => 'Producto editado exitosamente'];
             } else { // Insertar
-                $producto_nuevo = new Producto(null, $nombre, $descripcion, $precio, '', null, $imagen_final);
+                $producto_nuevo = new Producto(null, $nombre, $descripcion, $precio, '', null, null, $imagen_final);
                 $dao->insertar($producto_nuevo);
                 $id = $db->getConnection()->lastInsertId();
                 foreach ($cats_ids as $catid) {

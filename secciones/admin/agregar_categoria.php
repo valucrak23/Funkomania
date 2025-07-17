@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin') {
     header('Location: ../../index.php');
     exit;
@@ -22,7 +24,7 @@ if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin'
         </div>
     <?php endif; ?>
 
-    <form method="post" action="?sec=admin/agregar_categoria<?= $editando ? '&id=' . htmlspecialchars($categoria['id']) : '' ?>" class="admin-form-container">
+    <form method="post" action="?sec=admin/agregar_categoria" class="admin-form-container">
         <?php if ($editando): ?><input type="hidden" name="id" value="<?= htmlspecialchars($categoria['id']) ?>"><?php endif; ?>
         
         <div class="mb-3">

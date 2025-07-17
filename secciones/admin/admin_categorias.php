@@ -7,8 +7,13 @@ if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin'
     exit;
 }
 require_once __DIR__ . '/../../clases/ProductoDAO.php';
+require_once __DIR__ . '/../../clases/CategoriaDAO.php';
 require_once __DIR__ . '/../../clases/Producto.php';
 require_once __DIR__ . '/../../config/database.php';
+
+// Cargar categorías
+$categoriaDAO = new CategoriaDAO();
+$categorias = $categoriaDAO->obtenerTodas();
 
 // Eliminar categoría (mover esto antes de cualquier salida)
 if (isset($_GET['eliminar'])) {
@@ -79,14 +84,19 @@ if (isset($_GET['eliminar'])) {
             <tbody>
                 <?php if (empty($categorias)): ?>
                     <tr>
-                        <td colspan="4" class="text-center">No se encontraron categorías.</td>
+                        <td colspan="4" class="text-center">
+                            <p>No se encontraron categorías.</p>
+                            <a href="?sec=admin/crear_categorias_ejemplo" class="btn btn-primary btn-sm">
+                                <i class=bibi-plus-circle"></i> Crear categorías de ejemplo
+                            </a>
+                        </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($categorias as $categoria): ?>
                         <?php 
                         $dao = new ProductoDAO();
                         $tiene_productos = $dao->categoriaTieneProductos($categoria['id']);
-                        $es_protegida = $dao->categoriaEsProtegida($categoria['id']);
+                        $es_protegida = $categoriaDAO->esProtegida($categoria['id']);
                         $productos_categoria = $tiene_productos ? $dao->obtenerProductosPorCategoria($categoria['id']) : [];
                         ?>
                         <tr>
@@ -105,14 +115,33 @@ if (isset($_GET['eliminar'])) {
                                         <i class="bi bi-exclamation-triangle"></i> 
                                         <?= count($productos_categoria) ?> producto(s) asignado(s)
                                     </span>
-                                    <small class="d-block text-muted mt-1">
-                                        <?php foreach ($productos_categoria as $producto): ?>
-                                            <?= htmlspecialchars($producto['Nombre']) ?><?= !end($productos_categoria) ? ', ' : '' ?>
-                                        <?php endforeach; ?>
-                                        <?php if (count($productos_categoria) >= 5): ?>
-                                            y más...
+                                    <div class="productos-lista mt-1">
+                                        <?php 
+                                        $productos_mostrados = array_slice($productos_categoria, 0, 5);
+                                        $total_productos = count($productos_categoria);
+                                        ?>
+                                        <span class="productos-preview" id="preview-<?= $categoria['id'] ?>">
+                                            <?php foreach ($productos_mostrados as $index => $producto): ?>
+                                                <?= htmlspecialchars($producto->getNombre()) ?><?= $index < count($productos_mostrados) - 1 ? ', ' : '' ?>
+                                            <?php endforeach; ?>
+                                            <?php if ($total_productos > 5): ?>
+                                                <span class="text-muted">y más...</span>
+                                                <button type="button" class="btn btn-link btn-sm p-0 ms-2 text-info expandir-productos" data-categoria="<?= $categoria['id'] ?>">
+                                                    <i class="bi bi-chevron-down"></i> Ver todos
+                                                </button>
+                                            <?php endif; ?>
+                                        </span>
+                                        <?php if ($total_productos > 5): ?>
+                                            <span class="productos-completos d-none" id="completos-<?= $categoria['id'] ?>">
+                                                <?php foreach ($productos_categoria as $index => $producto): ?>
+                                                    <?= htmlspecialchars($producto->getNombre()) ?><?= $index < $total_productos - 1 ? ', ' : '' ?>
+                                                <?php endforeach; ?>
+                                                <button type="button" class="btn btn-link btn-sm p-0 ms-2 text-secondary contraer-productos" data-categoria="<?= $categoria['id'] ?>">
+                                                    <i class="bi bi-chevron-up"></i> Ocultar
+                                                </button>
+                                            </span>
                                         <?php endif; ?>
-                                    </small>
+                                    </div>
                                 <?php else: ?>
                                     <span class="badge bg-success">
                                         <i class="bi bi-check-circle"></i> Sin productos
@@ -120,22 +149,23 @@ if (isset($_GET['eliminar'])) {
                                 <?php endif; ?>
                             </td>
                             <td class="text-end" data-label="Acciones">
-                                <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </a>
                                 <?php if ($es_protegida): ?>
-                                    <button type="button" class="btn btn-sm btn-danger btn-tematico disabled" title="No se puede eliminar - categoría del sistema protegida">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
+                                    <!-- Sin botones para categoría protegida -->
                                 <?php elseif ($tiene_productos): ?>
                                     <button type="button" class="btn btn-sm btn-danger btn-tematico disabled" title="No se puede eliminar - tiene productos asignados">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
+                                    <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
                                 <?php else: ?>
                                     <button type="button" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" 
                                             onclick="confirmarEliminarCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre_categoria']) ?>')">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
+                                    <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -180,4 +210,23 @@ function confirmarEliminarCategoria(id, nombre) {
     const modal = new bootstrap.Modal(document.getElementById('modalEliminarCategoria'));
     modal.show();
 }
+</script> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.expandir-productos').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var cat = btn.getAttribute('data-categoria');
+            document.getElementById('preview-' + cat).style.display = 'none';
+            document.getElementById('completos-' + cat).classList.remove('d-none');
+        });
+    });
+    document.querySelectorAll('.contraer-productos').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var cat = btn.getAttribute('data-categoria');
+            document.getElementById('completos-' + cat).classList.add('d-none');
+            document.getElementById('preview-' + cat).style.display = '';
+        });
+    });
+});
 </script> 

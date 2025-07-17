@@ -6,6 +6,41 @@ if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin'
     header('Location: ../../index.php');
     exit;
 }
+
+// Incluir las clases necesarias
+require_once __DIR__ . '/../../clases/ProductoDAO.php';
+require_once __DIR__ . '/../../clases/CategoriaDAO.php';
+require_once __DIR__ . '/../../controladores/ProductoController.php';
+
+// Inicializar variables
+$editando = false;
+$producto = null;
+$errores =$categorias = [];
+$categoria_principal_id = null;
+$categoria_secundaria_id = null;
+
+// Obtener categorías
+$categoriaDAO = new CategoriaDAO();
+$categorias = $categoriaDAO->obtenerTodasParaAdmin();
+
+// Verificar si estamos editando
+if (isset($_GET['id'])) {
+    $editando = true;
+    $producto_id = intval($_GET['id']);
+    
+    // Obtener datos del producto para edición
+    $datos_edicion = ProductoController::obtenerDatosParaEdicion($producto_id);
+    if ($datos_edicion) {
+        $producto = $datos_edicion['producto'];
+        $categoria_principal_id = $datos_edicion['categoria_principal_id'];
+        $categoria_secundaria_id = $datos_edicion['categoria_secundaria_id'];
+    }
+}
+
+// Procesar errores si existen
+if (isset($_GET['errores'])) {
+    $errores = unserialize(urldecode($_GET['errores']));
+}
 ?>
 
 <div class="admin-container">
@@ -14,7 +49,7 @@ if (!isset($_SESSION['usuario_nivel']) || $_SESSION['usuario_nivel'] !== 'Admin'
         <a href="?sec=admin/admin_productos" class="btn btn-secondary btn-tematico"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 
-    <?php if ($errores): ?>
+    <?php if (!empty($errores)): ?>
         <div class="alert alert-danger">
             <ul class="mb-0">
                 <?php foreach ($errores as $e): ?><li><?=htmlspecialchars($e)?></li><?php endforeach; ?>

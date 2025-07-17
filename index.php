@@ -116,6 +116,25 @@ if ($seccion === 'admin/admin_productos' && isset($_GET['eliminar'])) {
 
 // Determinar página a cargar
 $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
+
+// Inicializar variables para formularios de administración
+if ($seccion === 'admin/agregar_categoria') {
+    $editando = isset($_GET['id']);
+    $categoria = null;
+    $errores = [];
+    if ($editando) {
+        $categoriaDAO = new CategoriaDAO();
+        $categoria = $categoriaDAO->obtenerPorId(intval($_GET['id']));
+        if (!$categoria) {
+            header('Location: ?sec=admin/admin_categorias&msg=error');
+            exit;
+        }
+    }
+    
+    if (isset($_GET['errores'])) {
+        $errores = unserialize(urldecode($_GET['errores']));
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
