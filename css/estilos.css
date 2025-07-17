@@ -1105,6 +1105,140 @@ footer {
     }
 }
 
+/* Estilos para el historial de compras */
+.historial-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.historial-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(197, 166, 255, 0.1);
+}
+
+.estadisticas-card {
+    background: linear-gradient(135deg, rgba(197, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(197, 166, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.estadisticas-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(197, 166, 255, 0.2);
+}
+
+.estadisticas-card .card-title {
+    color: #c5a6ff;
+    font-weight: 700;
+}
+
+.detalle-orden-item {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.detalle-orden-item:hover {
+    background: rgba(45, 55, 72, 0.7);
+    border-color: rgba(197, 166, 255, 0.3);
+}
+
+/* Estilos para el modal de compra exitosa */
+.modal-content {
+    background: rgba(26, 32, 44, 0.95);
+    border: 1px solid rgba(197, 166, 255, 0.3);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+}
+
+.modal-header.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-body {
+    color: #e2e8f0;
+    padding: 2rem;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(12, 10, 26, 0.5);
+    border-radius: 0 0 15px 15px;
+}
+
+.modal .alert-light {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+}
+
+.modal .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Animación para el ícono de éxito */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.modal .bi-check-circle-fill {
+    animation: successPulse 2s ease-in-out infinite;
+}
+
+/* Estilos para el indicador de datos guardados */
+.badge.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.btn-outline-secondary.btn-sm {
+    border-color: rgba(197, 166, 255, 0.3);
+    color: #c5a6ff;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary.btn-sm:hover {
+    background: rgba(197, 166, 255, 0.1);
+    border-color: rgba(197, 166, 255, 0.5);
+    color: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+/* Estilos para botones deshabilitados en admin */
+.btn-tematico.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-tematico.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Estilos para badges de productos en categorías */
+.badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%) !important;
+    color: #000;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
 @media (max-width: 768px) {
     .hero-banner {
         min-height: 40vh;
@@ -1168,7 +1302,24 @@ footer {
     background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.2);
     min-width: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+
+/* Estilos para categorías especiales en el dropdown */
+.dropdown-item.text-muted {
+    color: #6c757d !important;
+    font-style: italic;
+    border-left: 3px solid #6c757d;
+    margin-left: 0.5rem;
+    padding-left: 0.75rem;
+}
+
+.dropdown-item.text-muted:hover {
+    background-color: rgba(108, 117, 125, 0.1) !important;
+    color: #495057 !important;
+    border-left-color: #495057;
+}
+
+.dropdown-item.text-muted i {
+    color: #dc3545;
+    margin-right: 0.5rem;
 }

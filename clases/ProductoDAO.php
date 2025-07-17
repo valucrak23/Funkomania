@@ -19,18 +19,50 @@ class ProductoDAO {
      */
     public function obtenerTodos() {
         try {
-            $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
-                    FROM productos p
-                    LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
-                    LEFT JOIN categoria c ON pc.categoria_id = c.id
-                    GROUP BY p.id
-                    ORDER BY RAND()";
-            $stmt = $this->db->query($sql);
+            // Verificar si ya existe un orden aleatorio en la sesión
+            if (!isset($_SESSION['productos_orden_aleatorio'])) {
+                // Generar un nuevo orden aleatorio
+                $sql = "SELECT p.id FROM productos p ORDER BY RAND()";
+                $stmt = $this->db->query($sql);
+                $orden_ids = [];
+                while ($row = $stmt->fetch()) {
+                    $orden_ids[] = $row['id'];
+                }
+                $_SESSION['productos_orden_aleatorio'] = $orden_ids;
+            }
+            
+            // Usar el orden guardado en la sesión
+            $orden_ids = $_SESSION['productos_orden_aleatorio'];
+            if (empty($orden_ids)) {
+                // Si no hay orden, usar orden por nombre
+                $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
+                        FROM productos p
+                        LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
+                        LEFT JOIN categoria c ON pc.categoria_id = c.id
+                        GROUP BY p.id
+                        ORDER BY p.Nombre";
+            } else {
+                // Construir la consulta con el orden específico
+                $placeholders = str_repeat('?,', count($orden_ids) - 1) . '?';
+                $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
+                        FROM productos p
+                        LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
+                        LEFT JOIN categoria c ON pc.categoria_id = c.id
+                        GROUP BY p.id
+                        ORDER BY FIELD(p.id, $placeholders)";
+            }
+            
+            $stmt = $this->db->query($sql, $orden_ids);
             $productos = [];
             while ($row = $stmt->fetch()) {
+                $categorias = $row['categorias'] ?? null;
+                // Si no hay categorías, usar "Sin Categoría"
+                if (empty($categorias)) {
+                    $categorias = 'Sin Categoría';
+                }
                 $productos[] = new Producto(
                     $row['id'], $row['Nombre'], $row['Descripcion'], $row['precio'],
-                    $row['categorias'] ?? 'Sin categoría', 0, null, $row['imagen']
+                    $categorias, 0, null, $row['imagen']
                 );
             }
             return $productos;
@@ -89,17 +121,15 @@ class ProductoDAO {
                     WHERE pc.categoria_id = ?
                     GROUP BY p.id
                     ORDER BY p.Nombre";
-            
             $stmt = $this->db->query($sql, [$categoriaId]);
             $productos = [];
             while ($row = $stmt->fetch()) {
-                // Se pasa solo el nombre de la imagen, la clase Producto se encarga del resto
                 $productos[] = new Producto(
                     $row['id'],
                     $row['Nombre'],
                     $row['Descripcion'],
                     $row['precio'],
-                    $row['categorias'] ?? 'Sin categoría',
+                    $row['categorias'] ?? 'Sin Categoría',
                     0,
                     null,
                     $row['imagen']
@@ -238,6 +268,7 @@ class ProductoDAO {
      */
     public function obtenerCategorias() {
         try {
+            // Incluir todas las categorías, incluyendo "Sin Categoría"
             $sql = "SELECT id, nombre_categoria, descripcion FROM categoria ORDER BY nombre_categoria";
             $stmt = $this->db->query($sql);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -247,6 +278,28 @@ class ProductoDAO {
             // y manejar el error de forma más elegante en la vista.
             die("DEPURACIÓN: ¡ERROR FATAL al intentar obtener las categorías!: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Obtener todas las categorías incluyendo "Sin Categoría" para formularios de administración
+     */
+    public function obtenerCategoriasParaAdmin() {
+        try {
+            $sql = "SELECT id, nombre_categoria, descripcion FROM categoria ORDER BY nombre_categoria";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Error al obtener categorías para admin: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Verificar si una categoría es protegida (no se puede eliminar)
+     */
+    public function categoriaEsProtegida($categoria_id) {
+        // La categoría "Sin Categoría" (ID 11) es protegida
+        return $categoria_id == 11;
     }
 
     /**
@@ -280,6 +333,11 @@ class ProductoDAO {
      */
     public function eliminarCategoria($id) {
         try {
+            // Proteger la categoría "Sin Categoría" (ID 11) - no se puede eliminar
+            if ($id == 11) {
+                return false;
+            }
+            
             // Opcional: Antes de eliminar, podrías verificar si algún producto usa esta categoría.
             // Por simplicidad, aquí la eliminamos directamente.
             $sql = "DELETE FROM categoria WHERE id = ?";
@@ -421,14 +479,43 @@ class ProductoDAO {
      */
     public function obtenerDestacados($limite = 4) {
         try {
-            $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
-                    FROM productos p
-                    LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
-                    LEFT JOIN categoria c ON pc.categoria_id = c.id
-                    GROUP BY p.id
-                    ORDER BY RAND()
-                    LIMIT ?";
-            $stmt = $this->db->query($sql, [$limite]);
+            // Verificar si ya existe un orden aleatorio en la sesión
+            if (!isset($_SESSION['productos_orden_aleatorio'])) {
+                // Generar un nuevo orden aleatorio
+                $sql = "SELECT p.id FROM productos p ORDER BY RAND()";
+                $stmt = $this->db->query($sql);
+                $orden_ids = [];
+                while ($row = $stmt->fetch()) {
+                    $orden_ids[] = $row['id'];
+                }
+                $_SESSION['productos_orden_aleatorio'] = $orden_ids;
+            }
+            
+            // Usar el orden guardado en la sesión
+            $orden_ids = $_SESSION['productos_orden_aleatorio'];
+            if (empty($orden_ids)) {
+                // Si no hay orden, usar orden por nombre
+                $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
+                        FROM productos p
+                        LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
+                        LEFT JOIN categoria c ON pc.categoria_id = c.id
+                        GROUP BY p.id
+                        ORDER BY p.Nombre
+                        LIMIT ?";
+                $stmt = $this->db->query($sql, [$limite]);
+            } else {
+                // Construir la consulta con el orden específico y límite
+                $placeholders = str_repeat('?,', count($orden_ids) - 1) . '?';
+                $sql = "SELECT p.id, p.Nombre, p.Descripcion, p.precio, p.imagen, GROUP_CONCAT(c.nombre_categoria SEPARATOR ', ') AS categorias
+                        FROM productos p
+                        LEFT JOIN producto_categoria pc ON p.id = pc.producto_id
+                        LEFT JOIN categoria c ON pc.categoria_id = c.id
+                        GROUP BY p.id
+                        ORDER BY FIELD(p.id, $placeholders)
+                        LIMIT ?";
+                $stmt = $this->db->query($sql, array_merge($orden_ids, [$limite]));
+            }
+            
             $productos = [];
             while ($row = $stmt->fetch()) {
                 $productos[] = new Producto(
@@ -473,6 +560,42 @@ class ProductoDAO {
             return $productos;
         } catch (Exception $e) {
             error_log("Error en buscarPorCategoriaNombre: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Verificar si una categoría tiene productos asignados
+     */
+    public function categoriaTieneProductos($categoria_id) {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM producto_categoria WHERE categoria_id = ?";
+            $stmt = $this->db->query($sql, [$categoria_id]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] > 0;
+
+        } catch (Exception $e) {
+            error_log("Error en categoriaTieneProductos: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Obtener productos de una categoría específica
+     */
+    public function obtenerProductosPorCategoria($categoria_id) {
+        try {
+            $sql = "SELECT p.id, p.Nombre, p.imagen 
+                    FROM productos p 
+                    INNER JOIN producto_categoria pc ON p.id = pc.producto_id 
+                    WHERE pc.categoria_id = ? 
+                    ORDER BY p.Nombre 
+                    LIMIT 5";
+            $stmt = $this->db->query($sql, [$categoria_id]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (Exception $e) {
+            error_log("Error en obtenerProductosPorCategoria: " . $e->getMessage());
             return [];
         }
     }

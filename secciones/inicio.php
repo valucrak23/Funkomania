@@ -14,7 +14,12 @@
 
 <!-- Sección de Productos Destacados -->
 <div id="destacados" class="container px-4 py-5">
-    <h2 class="pb-2 border-bottom text-center mb-4">Funkos Destacados</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="pb-2 border-bottom text-center mb-0">Funkos Destacados</h2>
+        <a href="?sec=inicio&refresh=1" class="btn btn-outline-secondary btn-sm" title="Refrescar productos destacados">
+            <i class="bi bi-arrow-clockwise"></i> Refrescar
+        </a>
+    </div>
     
     <div class="row row-cols-1 row-cols-lg-4 align-items-stretch g-4 py-5">
         <?php

@@ -3,6 +3,15 @@ ob_start();
 // Iniciar la sesión en cada carga de página
 session_start();
 
+// Limpiar el orden aleatorio de productos cuando se actualiza la página
+if (isset($_GET['refresh'])) {
+    unset($_SESSION['productos_orden_aleatorio']);
+    // Redirigir sin el parámetro refresh para evitar que se mantenga en la URL
+    $redirect_url = '?sec=' . ($_GET['sec'] ?? 'inicio');
+    header('Location: ' . $redirect_url);
+    exit;
+}
+
 // Cargar la configuración y las clases base
 require_once 'config/database.php';
 require_once 'clases/Producto.php';
@@ -77,6 +86,8 @@ $seccionesValidas = [
     'contacto_procesar' => 'secciones/contacto_procesar.php',
     'carrito' => 'secciones/carrito.php',
     'checkout' => 'secciones/checkout.php',
+    'historial' => 'secciones/historial.php',
+    'detalle_orden' => 'secciones/detalle_orden.php',
     'alumno' => 'secciones/alumno.php',
     '404' => 'secciones/404.php',
     // Rutas de Admin
@@ -84,9 +95,13 @@ $seccionesValidas = [
     'admin/agregar_producto' => 'secciones/admin/agregar_producto.php',
     'admin/admin_categorias' => 'secciones/admin/admin_categorias.php',
     'admin/agregar_categoria' => 'secciones/admin/agregar_categoria.php',
+    'admin/admin_usuarios' => 'secciones/admin/admin_usuarios.php',
+    'admin/agregar_usuario' => 'secciones/admin/agregar_usuario.php',
     // Rutas de Autenticación
     'auth/login' => 'secciones/auth/login.php',
     'auth/logout' => 'secciones/auth/logout.php',
+    // Rutas de Registro (públicas)
+    'registro' => 'secciones/registro.php',
 ];
 
 // --- Lógica de Seguridad para Rutas de Admin ---
@@ -115,14 +130,26 @@ if ($seccion === 'admin/admin_categorias') {
     $dao = new ProductoDAO();
     if (isset($_GET['eliminar'])) {
         $id_eliminar = intval($_GET['eliminar']);
-        if ($dao->eliminarCategoria($id_eliminar)) {
-            header('Location: ?sec=admin/admin_categorias&msg=eliminada');
+        
+        // Verificar si la categoría es protegida
+        if ($dao->categoriaEsProtegida($id_eliminar)) {
+            header('Location: ?sec=admin/admin_categorias&msg=no_eliminar_protegida');
+            exit;
+        }
+        
+        // Verificar si la categoría tiene productos asignados
+        if ($dao->categoriaTieneProductos($id_eliminar)) {
+            header('Location: ?sec=admin/admin_categorias&msg=no_eliminar_con_productos');
         } else {
-            header('Location: ?sec=admin/admin_categorias&msg=error');
+            if ($dao->eliminarCategoria($id_eliminar)) {
+                header('Location: ?sec=admin/admin_categorias&msg=eliminada');
+            } else {
+                header('Location: ?sec=admin/admin_categorias&msg=error');
+            }
         }
         exit;
     }
-    $categorias = $dao->obtenerCategorias();
+    $categorias = $dao->obtenerCategoriasParaAdmin();
 
 } elseif ($seccion === 'admin/agregar_categoria') {
     $dao = new ProductoDAO();
@@ -175,7 +202,7 @@ if ($seccion === 'admin/admin_categorias') {
 if ($seccion === 'admin/agregar_producto') {
     $dao = new ProductoDAO();
     $db = Database::getInstance();
-    $categorias = $dao->obtenerCategorias();
+    $categorias = $dao->obtenerCategoriasParaAdmin();
 
     $editando = false;
     $producto = null;
@@ -338,14 +365,21 @@ $pagina = $seccionesValidas[$seccion] ?? $seccionesValidas['404'];
                                     <li><a class="dropdown-item" href="?sec=admin/admin_productos">Gestionar Productos</a></li>
                                     <li><a class="dropdown-item" href="?sec=admin/admin_categorias">Gestionar Categorías</a></li>
                                     <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="?sec=historial">Mi Historial</a></li>
+                                    <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item" href="index.php?sec=auth/logout">Cerrar Sesión</a></li>
                                 </ul>
                             </li>
                         <?php else: ?>
-                            <li class="nav-item">
-                                <a class="nav-link" href="index.php?sec=auth/logout">
-                                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-circle"></i> <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>
                                 </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                                    <li><a class="dropdown-item" href="?sec=historial">Mi Historial</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="index.php?sec=auth/logout">Cerrar Sesión</a></li>
+                                </ul>
                             </li>
                         <?php endif; ?>
                     <?php else: ?>

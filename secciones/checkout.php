@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../clases/ProductoDAO.php';
+require_once __DIR__ . '/../clases/OrdenDAO.php';
 
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['usuario_id'])) {
@@ -14,8 +15,28 @@ if (empty($_SESSION['carrito'])) {
 }
 
 $dao = new ProductoDAO();
+$ordenDAO = new OrdenDAO();
 $productos_carrito = [];
 $total = 0;
+
+// Cargar datos del usuario si tiene compras anteriores
+$datos_usuario = null;
+$mensaje_limpieza = '';
+if (isset($_SESSION['usuario_id'])) {
+    // Verificar si el usuario quiere limpiar los datos
+    if (isset($_GET['limpiar_datos']) && $_GET['limpiar_datos'] == 1) {
+        // Redirigir con mensaje de confirmación
+        header('Location: ?sec=checkout&msg=datos_limpiados');
+        exit;
+    }
+    
+    $datos_usuario = $ordenDAO->obtenerUltimosDatosUsuario($_SESSION['usuario_id']);
+}
+
+// Verificar mensaje de limpieza
+if (isset($_GET['msg']) && $_GET['msg'] === 'datos_limpiados') {
+    $mensaje_limpieza = 'Datos limpiados. Puedes ingresar nueva información.';
+}
 
 // Obtener productos del carrito
 foreach ($_SESSION['carrito'] as $id_producto => $cantidad) {
@@ -63,15 +84,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($titular)) $errores[] = 'El nombre del titular es obligatorio.';
     
     if (empty($errores)) {
-        // Aquí iría la lógica de procesamiento del pago
-        // Por ahora simulamos una compra exitosa
+        // Validar fecha de vencimiento MM/AA
+        $fecha_vencimiento = trim($_POST['fecha_vencimiento'] ?? '');
+        if (preg_match('/^(\d{2})\/(\d{2})$/', $fecha_vencimiento, $matches)) {
+            $mes = intval($matches[1]);
+            $anio = intval($matches[2]);
+            if ($mes < 1 || $mes > 12) {
+                $errores[] = 'El mes de vencimiento debe ser entre 01 y 12.';
+            }
+            if ($anio < 0 || $anio > 40) {
+                $errores[] = 'El año de vencimiento debe ser entre 00 y 40.';
+            }
+            // Validar que la fecha no sea menor a hoy
+            $mes_actual = intval(date('m'));
+            $anio_actual = intval(date('y'));
+            if ($anio < $anio_actual || ($anio == $anio_actual && $mes < $mes_actual)) {
+                $errores[] = 'La tarjeta no puede estar vencida. Usa una fecha igual o posterior al mes actual.';
+            }
+        } else {
+            $errores[] = 'El formato de vencimiento debe ser MM/AA.';
+        }
+    }
+
+    if (empty($errores)) {
+        // Crear la orden en la base de datos
+        $ordenDAO = new OrdenDAO();
         
-        // Limpiar carrito después de la compra
-        unset($_SESSION['carrito']);
+        $datos_cliente = [
+            'nombre' => $nombre,
+            'email' => $email,
+            'telefono' => $telefono,
+            'direccion' => $direccion,
+            'ciudad' => $ciudad,
+            'codigo_postal' => $codigo_postal,
+            'numero_tarjeta' => $numero_tarjeta
+        ];
         
-        // Redirigir a página de confirmación
-        header('Location: index.php?sec=checkout&msg=compra_exitosa');
-        exit;
+        $orden_id = $ordenDAO->crearOrden($_SESSION['usuario_id'], $datos_cliente, $productos_carrito, $total);
+        
+        if ($orden_id) {
+            // Limpiar carrito después de la compra exitosa
+            unset($_SESSION['carrito']);
+            
+            // Redirigir a página de confirmación con el ID de la orden
+            header('Location: index.php?sec=checkout&msg=compra_exitosa&orden_id=' . $orden_id);
+            exit;
+        } else {
+            $errores[] = 'Error al procesar la orden. Por favor, inténtalo de nuevo.';
+        }
     }
 }
 
@@ -84,12 +144,27 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
             <h2 class="mb-4"><i class="bi bi-credit-card-fill"></i> Confirmar Compra</h2>
             
             <?php if ($msg === 'compra_exitosa'): ?>
-                <div class="alert alert-success text-center">
-                    <i class="bi bi-check-circle-fill"></i> 
-                    <strong>¡Compra realizada con éxito!</strong><br>
-                    Tu pedido ha sido procesado correctamente. Recibirás un email de confirmación.
-                    <div class="mt-3">
-                        <a href="?sec=productos" class="btn btn-primary btn-tematico">Seguir comprando</a>
+                <?php
+                $orden_id = isset($_GET['orden_id']) ? intval($_GET['orden_id']) : 0;
+                $ordenDAO = new OrdenDAO();
+                $orden = $ordenDAO->obtenerOrdenPorId($orden_id, $_SESSION['usuario_id']);
+                ?>
+                <!-- Modal de confirmación de compra exitosa -->
+                <div class="alert alert-success text-center mb-4">
+                    <div class="mb-3"><i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i></div>
+                    <h4 class="text-success mb-3">¡Compra Exitosa!</h4>
+                    <p class="mb-3">Tu pedido ha sido procesado correctamente.</p>
+                    <div class="alert alert-light d-inline-block">
+                        <strong>Número de orden:</strong> #<?= $orden_id ?><br>
+                        <?php if ($orden): ?>
+                            <strong>Fecha:</strong> <?= date('d/m/Y H:i', strtotime($orden['fecha_orden'])) ?><br>
+                            <strong>Total:</strong> $<?= number_format($orden['total'], 2) ?>
+                        <?php endif; ?>
+                    </div>
+                    <p class="text-muted mt-3">Recibirás un email de confirmación con los detalles de tu pedido.</p>
+                    <div class="mt-4">
+                        <a href="?sec=productos" class="btn btn-primary btn-tematico me-2"><i class="bi bi-shop"></i> Seguir comprando</a>
+                        <a href="?sec=historial" class="btn btn-outline-primary btn-tematico"><i class="bi bi-clock-history"></i> Ver mi historial</a>
                     </div>
                 </div>
             <?php else: ?>
@@ -106,30 +181,47 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                     </div>
                 <?php endif; ?>
                 
+                <?php if ($mensaje_limpieza): ?>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill"></i> 
+                        <strong><?= htmlspecialchars($mensaje_limpieza) ?></strong>
+                    </div>
+                <?php endif; ?>
+                
                 <form method="POST" action="?sec=checkout" class="checkout-form">
                     <!-- Información de contacto -->
                     <div class="card mb-4">
-                        <div class="card-header">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5><i class="bi bi-person-fill"></i> Información de Contacto</h5>
+                            <?php if ($datos_usuario): ?>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-info">
+                                        <i class="bi bi-check-circle"></i> Datos guardados de compra anterior
+                                    </span>
+                                    <a href="?sec=checkout&limpiar_datos=1" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-arrow-clockwise"></i> Usar datos nuevos
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="nombre" class="form-label">Nombre completo *</label>
                                     <input type="text" class="form-control" id="nombre" name="nombre" 
-                                           value="<?= htmlspecialchars($_POST['nombre'] ?? '') ?>" required>
+                                           value="<?= htmlspecialchars($_POST['nombre'] ?? ($datos_usuario['nombre_cliente'] ?? '')) ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="email" class="form-label">Email *</label>
                                     <input type="email" class="form-control" id="email" name="email" 
-                                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
+                                           value="<?= htmlspecialchars($_POST['email'] ?? ($datos_usuario['email_cliente'] ?? '')) ?>" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="telefono" class="form-label">Teléfono *</label>
                                     <input type="tel" class="form-control" id="telefono" name="telefono" 
-                                           value="<?= htmlspecialchars($_POST['telefono'] ?? '') ?>" required>
+                                           value="<?= htmlspecialchars($_POST['telefono'] ?? ($datos_usuario['telefono_cliente'] ?? '')) ?>" required>
                                 </div>
                             </div>
                         </div>
@@ -144,18 +236,18 @@ $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
                             <div class="mb-3">
                                 <label for="direccion" class="form-label">Dirección *</label>
                                 <input type="text" class="form-control" id="direccion" name="direccion" 
-                                       value="<?= htmlspecialchars($_POST['direccion'] ?? '') ?>" required>
+                                       value="<?= htmlspecialchars($_POST['direccion'] ?? ($datos_usuario['direccion_envio'] ?? '')) ?>" required>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="ciudad" class="form-label">Ciudad *</label>
                                     <input type="text" class="form-control" id="ciudad" name="ciudad" 
-                                           value="<?= htmlspecialchars($_POST['ciudad'] ?? '') ?>" required>
+                                           value="<?= htmlspecialchars($_POST['ciudad'] ?? ($datos_usuario['ciudad'] ?? '')) ?>" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="codigo_postal" class="form-label">Código Postal *</label>
                                     <input type="text" class="form-control" id="codigo_postal" name="codigo_postal" 
-                                           value="<?= htmlspecialchars($_POST['codigo_postal'] ?? '') ?>" required>
+                                           value="<?= htmlspecialchars($_POST['codigo_postal'] ?? ($datos_usuario['codigo_postal'] ?? '')) ?>" required>
                                 </div>
                             </div>
                         </div>

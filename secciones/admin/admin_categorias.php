@@ -28,26 +28,41 @@ if (isset($_GET['eliminar'])) {
     </div>
 
     <?php if (isset($_GET['msg'])): ?>
-        <div class="alert alert-success" role="alert">
-            <i class="bi bi-check-circle-fill"></i> 
-            <?php
-                $mensaje = '';
-                switch ($_GET['msg']) {
-                    case 'agregada':
-                        $mensaje = 'Categoría agregada exitosamente.';
-                        break;
-                    case 'editada':
-                        $mensaje = 'Categoría actualizada exitosamente.';
-                        break;
-                    case 'eliminada':
-                        $mensaje = 'Categoría eliminada exitosamente.';
-                        break;
-                    case 'error':
-                        $mensaje = 'Ocurrió un error. Inténtalo de nuevo.';
-                        break;
-                }
-                echo htmlspecialchars($mensaje);
-            ?>
+        <?php
+            $mensaje = '';
+            $tipo_alert = 'alert-success';
+            $icono = 'bi-check-circle-fill';
+            
+            switch ($_GET['msg']) {
+                case 'agregada':
+                    $mensaje = 'Categoría agregada exitosamente.';
+                    break;
+                case 'editada':
+                    $mensaje = 'Categoría actualizada exitosamente.';
+                    break;
+                case 'eliminada':
+                    $mensaje = 'Categoría eliminada exitosamente.';
+                    break;
+                case 'no_eliminar_con_productos':
+                    $mensaje = 'No se puede eliminar la categoría porque tiene productos asignados. Primero debes quitar los productos de esta categoría.';
+                    $tipo_alert = 'alert-danger';
+                    $icono = 'bi-exclamation-triangle-fill';
+                    break;
+                case 'no_eliminar_protegida':
+                    $mensaje = 'No se puede eliminar esta categoría porque es una categoría del sistema protegida.';
+                    $tipo_alert = 'alert-warning';
+                    $icono = 'bi-shield-exclamation-fill';
+                    break;
+                case 'error':
+                    $mensaje = 'Ocurrió un error. Inténtalo de nuevo.';
+                    $tipo_alert = 'alert-danger';
+                    $icono = 'bi-exclamation-triangle-fill';
+                    break;
+            }
+        ?>
+        <div class="alert <?= $tipo_alert ?>" role="alert">
+            <i class="bi <?= $icono ?>"></i> 
+            <?= htmlspecialchars($mensaje) ?>
         </div>
     <?php endif; ?>
 
@@ -57,25 +72,71 @@ if (isset($_GET['eliminar'])) {
                 <tr>
                     <th scope="col">Nombre</th>
                     <th scope="col" class="col-descripcion">Descripción</th>
+                    <th scope="col">Productos</th>
                     <th scope="col" class="text-end">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if (empty($categorias)): ?>
                     <tr>
-                        <td colspan="3" class="text-center">No se encontraron categorías.</td>
+                        <td colspan="4" class="text-center">No se encontraron categorías.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($categorias as $categoria): ?>
+                        <?php 
+                        $dao = new ProductoDAO();
+                        $tiene_productos = $dao->categoriaTieneProductos($categoria['id']);
+                        $es_protegida = $dao->categoriaEsProtegida($categoria['id']);
+                        $productos_categoria = $tiene_productos ? $dao->obtenerProductosPorCategoria($categoria['id']) : [];
+                        ?>
                         <tr>
-                            <td data-label="Nombre"><?= htmlspecialchars($categoria['nombre_categoria']) ?></td>
+                            <td data-label="Nombre">
+                                <?= htmlspecialchars($categoria['nombre_categoria']) ?>
+                                <?php if ($es_protegida): ?>
+                                    <span class="badge bg-primary ms-2">
+                                        <i class="bi bi-shield-fill"></i> Sistema
+                                    </span>
+                                <?php endif; ?>
+                            </td>
                             <td class="col-descripcion" data-label="Descripción"><?= htmlspecialchars($categoria['descripcion'] ?? 'Sin descripción') ?></td>
+                            <td data-label="Productos">
+                                <?php if ($tiene_productos): ?>
+                                    <span class="badge bg-warning">
+                                        <i class="bi bi-exclamation-triangle"></i> 
+                                        <?= count($productos_categoria) ?> producto(s) asignado(s)
+                                    </span>
+                                    <small class="d-block text-muted mt-1">
+                                        <?php foreach ($productos_categoria as $producto): ?>
+                                            <?= htmlspecialchars($producto['Nombre']) ?><?= !end($productos_categoria) ? ', ' : '' ?>
+                                        <?php endforeach; ?>
+                                        <?php if (count($productos_categoria) >= 5): ?>
+                                            y más...
+                                        <?php endif; ?>
+                                    </small>
+                                <?php else: ?>
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Sin productos
+                                    </span>
+                                <?php endif; ?>
+                            </td>
                             <td class="text-end" data-label="Acciones">
-                                <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                <button type="button" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" 
-                                        onclick="confirmarEliminarCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre_categoria']) ?>')">
-                                    <i class="bi bi-trash-fill"></i>
-                                </button>
+                                <a href="?sec=admin/agregar_categoria&id=<?= $categoria['id'] ?>" class="btn btn-sm btn-info btn-tematico" title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <?php if ($es_protegida): ?>
+                                    <button type="button" class="btn btn-sm btn-danger btn-tematico disabled" title="No se puede eliminar - categoría del sistema protegida">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                <?php elseif ($tiene_productos): ?>
+                                    <button type="button" class="btn btn-sm btn-danger btn-tematico disabled" title="No se puede eliminar - tiene productos asignados">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                <?php else: ?>
+                                    <button type="button" class="btn btn-sm btn-danger btn-tematico" title="Eliminar" 
+                                            onclick="confirmarEliminarCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre_categoria']) ?>')">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

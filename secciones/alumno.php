@@ -23,7 +23,8 @@
                                 </li>
                                 <li class="list-group-item bg-transparent text-light border-0 ps-0">
                                     <i class="bi bi-envelope-at-fill me-2 text-primary"></i>
-                                    <strong>Correo electrónico:</strong> agostina.cruz@davinci.edu.ar
+                                    <strong>Correo electrónico:</strong> <a href="mailto:agostina.cruz@davinci.edu.ar ?Subject=email-agostina">agostina.cruz@davinci.edu.ar</a>
+
                                 </li>
                             </ul>
                         </div>
@@ -50,7 +51,8 @@
                                 </li>
                                 <li class="list-group-item bg-transparent text-light border-0 ps-0">
                                     <i class="bi bi-envelope-at-fill me-2 text-primary"></i>
-                                    <strong>Correo electrónico:</strong> alfredo.cubillo@davinci.edu.ar
+                                    <strong>Correo electrónico:</strong> <a href="mailto:alfredo.cubillo@davinci.edu.ar ?Subject=email-agostina">alfredo.cubillo@davinci.edu.ar</a>
+
                                 </li>
                             </ul>
                         </div>
@@ -77,7 +79,7 @@
                                 </li>
                                 <li class="list-group-item bg-transparent text-light border-0 ps-0">
                                     <i class="bi bi-envelope-at-fill me-2 text-primary"></i>
-                                    <strong>Correo electrónico:</strong> valentina.ijelchuk@davinci.edu.ar
+                                    <strong>Correo electrónico:</strong> <a href="mailto:valentina.ijelchuk@davinci.edu.ar ?Subject=email-agostina">valentina.ijelchuk@davinci.edu.ar</a>
                                 </li>
                             </ul>
                         </div>

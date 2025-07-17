@@ -23,8 +23,13 @@ if ($busqueda) {
     }
 } elseif ($cat_id) {
     $productos = $dao->obtenerPorCategoria($cat_id);
-    $categoria = $dao->obtenerCategoriaPorId($cat_id);
-    $titulo = $categoria ? htmlspecialchars($categoria['nombre_categoria']) : "Productos";
+    if ($cat_id == 11) {
+        // Categoría "Sin Categoría"
+        $titulo = "Sin Categoría";
+    } else {
+        $categoria = $dao->obtenerCategoriaPorId($cat_id);
+        $titulo = $categoria ? htmlspecialchars($categoria['nombre_categoria']) : "Productos";
+    }
 } else {
     $productos = $dao->obtenerTodos();
     $titulo = "Todos los productos";
@@ -32,7 +37,7 @@ if ($busqueda) {
 
 // Función para obtener la clase CSS según la categoría
 function getCategoriaClass($categorias) {
-    if (empty($categorias) || $categorias === 'Sin categoría') {
+    if (empty($categorias) || $categorias === 'Sin categoría' || $categorias === 'Sin Categoría') {
         return 'card-default';
     }
     
@@ -74,7 +79,14 @@ function getCategoriaClass($categorias) {
 }
 ?>
 
-<h2 class="text-center mb-4"><?=$titulo?></h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-center mb-0"><?=$titulo?></h2>
+    <?php if (!$busqueda && !$cat_id): ?>
+        <a href="?sec=productos&refresh=1" class="btn btn-outline-secondary btn-sm" title="Refrescar orden aleatorio">
+            <i class="bi bi-arrow-clockwise"></i> Refrescar
+        </a>
+    <?php endif; ?>
+</div>
 
 <!-- Formulario de búsqueda -->
 <div class="row justify-content-center mb-4">

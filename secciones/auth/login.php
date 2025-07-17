@@ -81,7 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </button>
             </div>
         </form>
-         <div class="text-center mt-4">
+        <div class="text-center mt-3">
+            <a href="index.php?sec=registro" class="btn btn-outline-secondary w-100 mt-2">
+                <i class="bi bi-person-plus"></i> Crear cuenta nueva
+            </a>
+        </div>
+        <div class="text-center mt-4">
             <a href="index.php" class="text-decoration-none">← Volver a la tienda</a>
         </div>
     </div>
