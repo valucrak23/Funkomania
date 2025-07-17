@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../clases/Producto.php';
 require_once "clases/ProductoDAO.php";
+require_once "clases/CategoriaDAO.php";
 
 $mensaje = isset($_GET['msg']) && $_GET['msg'] === 'agregado' ? '¡Producto agregado al carrito!' : '';
 
@@ -27,7 +28,8 @@ if ($busqueda) {
         // Categoría "Sin Categoría"
         $titulo = "Sin Categoría";
     } else {
-        $categoria = $dao->obtenerCategoriaPorId($cat_id);
+        $categoriaDAO = new CategoriaDAO();
+        $categoria = $categoriaDAO->obtenerPorId($cat_id);
         $titulo = $categoria ? htmlspecialchars($categoria['nombre_categoria']) : "Productos";
     }
 } else {
